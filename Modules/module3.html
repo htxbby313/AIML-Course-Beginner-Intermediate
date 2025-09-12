@@ -1,0 +1,48 @@
+<h2>MODULE 3: DEEP LEARNING</h2>
+<div class="prose text-neon-green max-w-none">
+    <h3>Introduction to Neural Networks</h3>
+    <p>Deep Learning is a powerful subset of Machine Learning that uses artificial neural networks with multiple layers to learn complex patterns. A neural network consists of layers of neurons, with non-linear <strong>activation functions</strong> like <strong>ReLU</strong> and <strong>Softmax</strong> applied to their outputs. </p>
+    <h4>Hands-on: Building a Simple Neural Network</h4>
+    <p>Let's build a simple neural network using Keras on top of TensorFlow to see how it works in practice.</p>
+    <div class="bg-terminal-code p-4 rounded-lg border border-neon-green shadow-lg">
+        <h4 class="font-bold mb-3 text-neon-green">Module 3: Neural Networks Notebook</h4>
+        <pre class="jupyter-code"><code>import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from sklearn.datasets import make_moons
+from sklearn.model_selection import train_test_split
+
+# Generate a synthetic dataset for a binary classification problem.
+X, y = make_moons(n_samples=1000, noise=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a Sequential model, which is a linear stack of layers.
+model = Sequential()
+# Add the first hidden layer with 16 neurons. 'relu' is a common
+# activation function that introduces non-linearity.
+model.add(Dense(16, input_shape=(2,), activation='relu'))
+# Add a second hidden layer with 8 neurons.
+model.add(Dense(8, activation='relu'))
+# Add the output layer with 1 neuron and a 'sigmoid' activation function,
+# which is used for binary classification.
+model.add(Dense(1, activation='sigmoid'))
+
+# Compile the model by specifying the optimizer, loss function, and metrics.
+# 'adam' is an efficient optimization algorithm.
+# 'binary_crossentropy' is the standard loss function for binary classification.
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+print("Model built and compiled.")
+
+# Train the model on the training data.
+history = model.fit(X_train, y_train, epochs=5, batch_size=32, verbose=0)
+print("\nModel trained. Check history for results.")
+```</pre>
+    </div>
+    <h4>Knowledge Check: Module 3 Quiz</h4>
+    <div class="quiz-container mb-4">
+        <h4 class="font-semibold text-neon-green mb-3">Quiz 3: Deep Learning Fundamentals</h4>
+        <div id="quiz3-questions"></div>
+        <div id="quiz3-results" class="hidden mt-6 p-4 rounded-lg bg-terminal-code text-neon-green shadow-inner"></div>
+        <button onclick="runQuiz(3)" class="mt-6 w-full action-button">Submit Quiz</button>
+    </div>
+</div>

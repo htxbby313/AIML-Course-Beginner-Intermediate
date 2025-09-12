@@ -1,0 +1,52 @@
+<h2>MODULE 1: AI/ML FOUNDATIONS</h2>
+<div class="prose text-neon-green max-w-none">
+    <h3>What is AI?</h3>
+    <p>Artificial Intelligence (AI) is a broad field of computer science that gives machines the ability to perform tasks that typically require human intelligence. It is a collection of techniques and algorithms that allow machines to mimic and even surpass human cognitive functions.</p>
+
+    <h3>Machine Learning (ML)</h3>
+    <p><strong>Machine Learning (ML)</strong> is a subset of AI that focuses on building systems that can learn from and make decisions based on data. Instead of being explicitly programmed with rules, an ML model is trained on a large dataset to identify patterns and relationships. This allows it to make predictions or decisions about new, unseen data.</p>
+
+    <h3>Types of Learning</h3>
+    <p><strong>Supervised Learning:</strong> The model is trained on a labeled dataset. Example: Training a model to identify spam emails. </p>
+    <p><strong>Unsupervised Learning:</strong> The model is trained on an unlabeled dataset to find hidden patterns or structures. Example: Grouping customers into different segments based on purchasing behavior. </p>
+    <p><strong>Reinforcement Learning:</strong> The model learns by interacting with an environment and receiving rewards or penalties. Example: Training a self-driving car. </p>
+    <p>Think of it as a set of nested concepts: AI is the largest, ML is inside AI, and Deep Learning (DL) is inside ML. </p>
+
+    <h4>Hands-on: Environment Setup</h4>
+    <p>Before moving on, let's make sure your environment is ready. Copy and paste this code into a Jupyter Notebook to practice with NumPy and Pandas.</p>
+    <div class="bg-terminal-code p-4 rounded-lg border border-neon-green shadow-lg">
+        <h4 class="font-bold mb-3 text-neon-green">Module 1: Setup Notebook</h4>
+        <pre class="jupyter-code"><code>import numpy as np
+import pandas as pd
+
+# Create a Python list of lists to represent a 2x3 matrix.
+matrix_data = [[1, 2, 3], [4, 5, 6]]
+
+# Convert the Python list into a NumPy array.
+# NumPy arrays are much more efficient for mathematical operations.
+np_array = np.array(matrix_data)
+
+# The `.shape` attribute tells you the dimensions of the array.
+# In this case, it's 2 rows and 3 columns.
+print("Shape of the array:", np_array.shape)
+
+# Create a dictionary to hold our sample data.
+data = {'Name': ['Neo', 'Trinity', 'Morpheus'], 'Power Level': [100, 95, 80]}
+
+# Convert the dictionary into a Pandas DataFrame.
+# DataFrames are the standard way to work with tabular data in Python.
+df = pd.DataFrame(data)
+
+print("\nDataFrame:")
+print(df)
+</code></pre>
+    </div>
+
+    <h4>Knowledge Check: Module 1 Quiz</h4>
+    <div class="quiz-container mb-4">
+        <h4 class="font-semibold text-neon-green mb-3">Quiz 1: AI/ML Foundations</h4>
+        <div id="quiz1-questions"></div>
+        <div id="quiz1-results" class="hidden mt-6 p-4 rounded-lg bg-terminal-code text-neon-green shadow-inner"></div>
+        <button onclick="runQuiz(1)" class="mt-6 w-full action-button">Submit Quiz</button>
+    </div>
+</div>

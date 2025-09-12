@@ -1,0 +1,40 @@
+<h2>MODULE 2: CORE MACHINE LEARNING</h2>
+<div class="prose text-neon-green max-w-none">
+    <h3>Data Preprocessing</h3>
+    <p>This module dives into the essential steps of preparing your data. <strong>Data Preprocessing</strong> is a crucial step that involves cleaning, organizing, and transforming raw data into a suitable format for ML algorithms.</p>
+    <p>Key steps include: Handling Missing Values, Data Transformation (Scaling/Encoding), and Feature Engineering.</p>
+    <div class="bg-terminal-code p-4 rounded-lg border border-neon-green shadow-lg">
+        <h4 class="font-bold mb-3 text-neon-green">Hands-on: Data Cleaning</h4>
+        <pre class="jupyter-code"><code>import pandas as pd
+import numpy as np
+
+# Sample messy dataset with missing values (np.nan) and categorical data
+data = {
+    'satisfaction_score': [4, 5, 2, np.nan, 5],
+    'product_type': ['A', 'B', 'A', 'C', 'B']
+}
+df = pd.DataFrame(data)
+print("Original DataFrame:\n", df)
+
+# Fill missing numerical values with the median. This is a common
+# technique to handle missing data without discarding the entire row.
+median_score = df['satisfaction_score'].median()
+df['satisfaction_score'].fillna(median_score, inplace=True)
+
+# One-hot encode the 'product_type' categorical column.
+# This converts categorical data into a numerical format that ML
+# algorithms can easily process.
+df = pd.get_dummies(df, columns=['product_type'], prefix='product')
+print("\nCleaned and Encoded DataFrame:\n", df)
+```</pre>
+    </div>
+    <h3>Supervised Learning: Regression & Classification</h3>
+    <p><strong>Regression</strong> is used for predicting a continuous output value (e.g., house prices). <strong>Classification</strong> is used for predicting a categorical output (e.g., spam/not spam).</p>
+    <h4>Knowledge Check: Module 2 Quiz</h4>
+    <div class="quiz-container mb-4">
+        <h4 class="font-semibold text-neon-green mb-3">Quiz 2: Core ML Concepts</h4>
+        <div id="quiz2-questions"></div>
+        <div id="quiz2-results" class="hidden mt-6 p-4 rounded-lg bg-terminal-code text-neon-green shadow-inner"></div>
+        <button onclick="runQuiz(2)" class="mt-6 w-full action-button">Submit Quiz</button>
+    </div>
+</div>

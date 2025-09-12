@@ -1,0 +1,37 @@
+<h2>MODULE 4: NATURAL LANGUAGE PROCESSING</h2>
+<div class="prose text-neon-green max-w-none">
+    <h3>Text Preprocessing</h3>
+    <p>Natural Language Processing (NLP) is a subfield of AI that focuses on enabling computers to understand human language. <strong>Text Preprocessing</strong> is a crucial step before any NLP task.</p>
+    <p>Key steps include: <strong>Tokenization</strong>, <strong>Lowercasing</strong>, <strong>Stop Word Removal</strong>, <strong>Stemming</strong> (a crude word-root reduction), and <strong>Lemmatization</strong> (a more sophisticated word-root reduction considering context).</p>
+    <div class="bg-terminal-code p-4 rounded-lg border border-neon-green shadow-lg">
+        <h4 class="font-bold mb-3 text-neon-green">Hands-on: NLP Basics</h4>
+        <p>Before running this code, you may need to download NLTK data. Open a Python terminal and run `nltk.download('punkt')` and `nltk.download('stopwords')`.</p>
+        <pre class="jupyter-code"><code>import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+
+sample_text = "Natural Language Processing (NLP) is a fascinating field."
+
+# Step 1: Tokenization and Lowercasing.
+# This breaks the text into individual words or tokens and converts them to lowercase.
+text_lower = sample_text.lower()
+tokens = word_tokenize(text_lower)
+print(f"Tokens: {tokens}")
+
+# Step 2: Removing Stop Words.
+# Stop words are common words (like 'is', 'a', 'the') that are often
+# filtered out because they add little semantic value.
+stop_words = set(stopwords.words('english'))
+filtered_tokens = [word for word in tokens if word.isalpha() and word not in stop_words]
+print(f"Filtered tokens: {filtered_tokens}")
+</code></pre>
+    </div>
+    <h4>Knowledge Check: Module 4 Quiz</h4>
+    <div class="quiz-container mb-4">
+        <h4 class="font-semibold text-neon-green mb-3">Quiz 4: NLP Basics</h4>
+        <div id="quiz4-questions"></div>
+        <div id="quiz4-results" class="hidden mt-6 p-4 rounded-lg bg-terminal-code text-neon-green shadow-inner"></div>
+        <button onclick="runQuiz(4)" class="mt-6 w-full action-button">Submit Quiz</button>
+    </div>
+</div>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI & Machine Learning Mastery Course</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: #0d1117;
+            color: #00ff41;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; }
+        .text-neon-green { color: #00ff41; }
+        .bg-matrix-green { background-color: #004d00; }
+        .border-neon-green { border-color: #00ff41; }
+        .bg-terminal-code { background-color: #001a00; }
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background-color: #00ff41;
+            box-shadow: 0 0 10px #00ff41, 0 0 5px #00ff41;
+            transition: width 0.5s ease-in-out;
+            z-index: 50;
+        }
+        .quiz-option {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            line-height: 1.5;
+        }
+        .quiz-option:hover {
+            transform: scale(1.01);
+            box-shadow: 0 0 5px #00ff41;
+        }
+        .explanation {
+            font-size: 0.875rem;
+            color: #00e63c;
+        }
+        .correct-answer { background-color: #008000 !important; }
+        .incorrect-answer { background-color: #b30000 !important; }
+        pre {
+            border: 1px solid #00ff41;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+        .course-title {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #00ff41;
+            text-shadow: 0 0 15px #00ff41, 0 0 7px #00ff41;
+            line-height: 1.2;
+        }
+        .module-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #00ff41;
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
+        }
+        .module-content h3 {
+            font-size: 1.75rem;
+            font-style: italic;
+            font-weight: 700;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: #00e63c;
+            text-shadow: 0 0 5px #00e63c;
+        }
+        .module-content h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #00e63c;
+        }
+        .module-content p {
+            margin-bottom: 1.25rem;
+            line-height: 1.7;
+        }
+        .jupyter-markdown, .jupyter-code {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .quiz-container {
+            border: 1px solid #00ff41;
+            margin-top: 3.5rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+        }
+        .action-button {
+            background-color: #004d00;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        .action-button:hover {
+            box-shadow: 0 0 15px #00ff41;
+            background-color: #006600;
+        }
+        .module-view { display: none; }
+        .module-view.active { display: block; }
+        .next-button-locked {
+            pointer-events: none;
+            opacity: 0.4;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        .module-view::-webkit-scrollbar {
+            display: none;
+            width: 0 !important;
+        }
+        .module-view {
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-8 bg-matrix-green rounded-lg shadow-md border border-neon-green">
+        <div class="progress-bar" id="progressBar"></div>
+
+        <header class="course-title">
+            AI & Machine Learning Mastery Course
+        </header>
+
+        <div id="course-content-container" class="space-y-16">
+            <!-- Content will be loaded here dynamically -->
+        </div>
+
+        <div class="flex justify-between mt-10" id="navigation-buttons-container">
+            <button id="previousModuleBtn" onclick="previousModule()" class="action-button" style="display: none;">Previous Module</button>
+            <button id="nextModuleBtn" onclick="nextModule()" class="action-button next-button-locked">Next Module</button>
+        </div>
+    </div>
+
+    <script>
+        let currentModuleIndex = 0;
+        const totalModules = 6;
+        const quizScores = {};
+        const passingScore = 0.8;
+
+        const allQuizzes = {
+            1: [
+                { question: "Which of the following is the broadest concept?", options: ["Deep Learning", "Artificial Intelligence (AI)", "Machine Learning (ML)", "Robotics"], correct: 1, explanation: "Artificial Intelligence is the overarching field, with Machine Learning as a subset and Deep Learning as a subset of ML." },
+                { question: "What is the primary goal of Supervised Learning?", options: ["To find hidden patterns in unlabeled data", "To learn from labeled data to make predictions on new data", "To learn by interacting with an environment through rewards and penalties", "To create new features from existing data"], correct: 1, explanation: "Supervised learning models are trained on labeled datasets, where each data point is tagged with a correct output." },
+                { question: "An algorithm that groups customers into segments based on their purchasing habits without any prior labels is an example of:", options: ["Supervised Learning", "Reinforcement Learning", "Unsupervised Learning", "Deep Learning"], correct: 2, explanation: "Unsupervised learning is used to find hidden patterns or structures within unlabeled data." },
+                { question: "What is the primary purpose of the NumPy library in an AI/ML environment?", options: ["To create interactive visualizations", "To manage software packages and environments", "To perform efficient numerical computations with multi-dimensional arrays", "To build and train deep neural networks"], correct: 2, explanation: "NumPy is a fundamental package for numerical computation in Python and provides support for large, multi-dimensional arrays and matrices." },
+                { question: "Which term is best described as 'training a machine to play a game by rewarding it for winning and penalizing it for losing'?", options: ["Supervised Learning", "Unsupervised Learning", "Reinforcement Learning", "Transfer Learning"], correct: 2, explanation: "Reinforcement learning models learn by interacting with an environment and receiving rewards or penalties." }
+            ],
+            2: [
+                { question: "From Module 1: What is the relationship between AI, ML, and DL?", options: ["AI and ML are the same, with DL being a subset.", "ML is a subset of AI, and DL is a subset of ML.", "DL is a subset of AI, and ML is a subset of DL.", "They are three unrelated fields."], correct: 1, explanation: "AI is the broadest concept, followed by ML, and then DL as a more specialized subset of ML." },
+                { question: "What is the primary purpose of data preprocessing in machine learning?", options: ["To make the data look visually appealing in charts", "To prepare and transform raw data into a suitable format for ML algorithms", "To reduce the amount of data to save storage space", "To encrypt sensitive information in the dataset"], correct: 1, explanation: "Data preprocessing transforms raw data into a clean, structured format that ML algorithms can effectively use, improving model performance and reliability." },
+                { question: "Which metric is most appropriate for evaluating a regression model?", options: ["Accuracy", "Precision", "Mean Squared Error (MSE)", "F1 Score"], correct: 2, explanation: "Mean Squared Error (MSE) measures the average squared difference between predicted and actual values, making it suitable for regression tasks where we predict continuous values." },
+                { question: "What does the term 'feature engineering' refer to?", options: ["The process of selecting which machine learning algorithm to use", "Creating new features from existing data to improve model performance", "Engineering a system to automatically collect more data", "The process of tuning model hyperparameters"], correct: 1, explanation: "Feature engineering involves creating new features from existing data to help the model better understand patterns, which can significantly improve model performance." },
+                { question: "What is the difference between overfitting and underfitting?", options: ["Overfitting is when the model is too simple, underfitting is when it is too complex.", "Overfitting occurs on test data, while underfitting occurs on training data.", "Overfitting is when the model learns noise in the data, underfitting is when it fails to capture the underlying pattern.", "There is no difference; they are different terms for the same concept."], correct: 2, explanation: "Overfitting results in a model that performs well on training data but poorly on unseen data. Underfitting is when the model is too simple and performs poorly on both." }
+            ],
+            3: [
+                { question: "From Module 2: A confusion matrix is used to evaluate the performance of which type of model?", options: ["Regression", "Clustering", "Classification", "Anomaly Detection"], correct: 2, explanation: "A confusion matrix shows the number of true positives, false positives, true negatives, and false negatives for a classification model." },
+                { question: "What is the primary purpose of a neural network's activation function?", options: ["To add non-linearity to the network's output", "To speed up the training process", "To increase the number of layers", "To handle missing data"], correct: 0, explanation: "Activation functions introduce non-linearity, allowing the network to learn more complex, non-linear patterns in the data." },
+                { question: "Which algorithm is used in deep learning to efficiently update a neural network's weights during training?", options: ["K-Means", "Logistic Regression", "Backpropagation", "Decision Trees"], correct: 2, explanation: "Backpropagation is the key algorithm that calculates and propagates the error gradients backward through the network to update the weights." },
+                { question: "In a CNN, what is the main purpose of a 'convolutional layer'?", options: ["To reduce the spatial dimensions of the feature maps", "To flatten the input data into a single vector", "To extract features like edges and textures from the input image", "To apply a non-linear activation function to the data"], correct: 2, explanation: "Convolutional layers apply filters to the image to automatically learn and extract hierarchical features." },
+                { question: "What is a major benefit of using transfer learning?", options: ["It requires a larger dataset to achieve good performance.", "It makes the model less complex and easier to interpret.", "It significantly reduces training time and can lead to better performance with limited data.", "It is only used for unsupervised learning tasks."], correct: 2, explanation: "Transfer learning leverages a pre-trained model on a large dataset, allowing you to fine-tune it for a related task with much less data and computational resources." }
+            ],
+            4: [
+                { question: "From Module 3: What is the main purpose of a 'hidden layer' in a neural network?", options: ["To receive the raw input data", "To perform complex computations and transformations on the data", "To produce the final prediction", "To manage the network's overall structure"], correct: 1, explanation: "Hidden layers are where the primary computations happen, allowing the network to learn intricate patterns from the data." },
+                { question: "What is the main difference between stemming and lemmatization?", options: ["Stemming is a more accurate process that considers context.", "Lemmatization is faster but less accurate.", "Stemming is a crude process that often chops off the end of words, while lemmatization reduces words to their meaningful base form.", "They are two different names for the exact same process."], correct: 2, explanation: "Lemmatization is a more sophisticated process that uses a dictionary to find the root form, whereas stemming is a heuristic that may result in non-words." },
+                { question: "What is a 'word embedding'?", options: ["A method to count word frequencies", "A binary representation of a word", "A numerical vector that captures a word's meaning and relationships", "A list of stop words"], correct: 2, explanation: "Word embeddings allow machine learning models to understand the semantic relationships between words by representing them as dense vectors in a high-dimensional space." },
+                { question: "Which NLP task involves assigning a sentiment (e.g., positive, negative, neutral) to a piece of text?", options: ["Text Classification", "Machine Translation", "Sentiment Analysis", "Named Entity Recognition"], correct: 2, explanation: "Sentiment analysis is a specific type of text classification where the goal is to determine the emotional tone of the text." },
+                { question: "What is a key feature of the Transformer architecture?", options: ["It uses a single, massive recurrent layer.", "It relies on a self-attention mechanism to weigh the importance of different words.", "It is designed only for text generation tasks.", "It is the predecessor to simple RNNs."], correct: 1, explanation: "The self-attention mechanism is what makes the Transformer so effective at understanding context and relationships in long sequences of text." }
+            ],
+            5: [
+                { question: "From Module 4: What is the purpose of lemmatization?", options: ["To convert text into images for computer vision models.", "To reduce a word to its crude root form by chopping off its end.", "To remove common words like 'the' and 'a' from text.", "To reduce a word to its meaningful base form considering its context."], correct: 3, explanation: "Lemmatization is a sophisticated text preprocessing step that reduces words to their meaningful base or dictionary form, unlike stemming which is a crude process." },
+                { question: "What is the main function of an image's 'channels' in the RGB model?", options: ["To represent the image's resolution.", "To determine the image's brightness.", "To represent the intensity of red, green, and blue colors.", "To compress the image file size."], correct: 2, explanation: "In the RGB model, each channel corresponds to one of the primary colors (Red, Green, or Blue) and stores its intensity value for each pixel." },
+                { question: "Which image preprocessing technique helps prevent a model from overfitting to the training data?", options: ["Resizing", "Grayscale conversion", "Augmentation", "Normalization"], correct: 2, explanation: "Image augmentation creates new training examples by applying random transformations (like rotation or flipping) to existing images, increasing data diversity and helping the model generalize better." },
+                { question: "What is the key difference between Object Detection and Image Segmentation?", options: ["Object detection identifies and locates objects with a bounding box, while segmentation classifies each pixel.", "Object detection is only for video, while segmentation is for static images.", "Segmentation is an older technique than object detection.", "They are the same process, just with a different name."], correct: 0, explanation: "Object detection aims to find objects in an image and draw a bounding box around them. Image segmentation is more granular; it classifies every single pixel in an image to determine what object it belongs to, providing more precise outlines." },
+                { question: "What is a major benefit of using a pre-trained model for computer vision?", options: ["It requires a larger training dataset.", "It is always more accurate than a custom-trained model.", "It allows you to get good performance with less data and computational power.", "It can only be used for image classification tasks."], correct: 2, explanation: "Pre-trained models have learned a wealth of features from large public datasets. This saves you time and resources, as you only need to fine-tune the model for your specific task." }
+            ],
+            6: [
+                { question: "From Module 5: What is the primary purpose of image normalization?", options: ["To convert an image from RGB to grayscale.", "To reduce the image file size.", "To resize the image to a standard dimension.", "To scale pixel values to a fixed range (e.g., 0 to 1)"], correct: 3, explanation: "Normalization scales pixel values to a standard range, which helps to stabilize and accelerate the training of neural networks." },
+                { question: "What are the three main components of a Reinforcement Learning problem?", options: ["Input, Hidden Layer, Output", "Data, Model, Prediction", "Agent, Environment, Reward", "Text, Image, Audio"], correct: 2, explanation: "An RL agent learns by interacting with an environment, and receives rewards for desired behaviors, which guides its learning process." },
+                { question: "Which of the following is an example of Generative AI?", options: ["A model that predicts house prices based on features.", "A system that classifies emails as spam or not spam.", "A model that generates new, realistic images of human faces.", "A system that clusters customer data into segments."], correct: 2, explanation: "Generative AI is a type of AI that generates new content, such as text, images, or audio, rather than analyzing or classifying existing data." },
+                { question: "What is the primary goal of MLOps?", options: ["To build more accurate machine learning models.", "To automate the entire machine learning lifecycle, from development to deployment.", "To reduce the amount of data needed for training.", "To create more interpretable models."], correct: 1, explanation: "MLOps focuses on the practices and tools needed to streamline the entire lifecycle of a machine learning project, enabling continuous delivery and deployment of models." },
+                { question: "What is the core purpose of the Capstone Project?", options: ["To create a simple, theoretical model.", "To learn about a single AI topic in depth.", "To apply all the concepts from the course to a real-world, comprehensive problem.", "To test your knowledge of reinforcement learning."], correct: 2, explanation: "A capstone project is the culminating experience of a course, allowing you to synthesize and apply all the learned skills in an end-to-end project." }
+            ]
+        };
+
+        const quizContainers = {};
+
+        function loadQuiz(moduleIndex) {
+            const quizContainerId = `quiz${moduleIndex}-questions`;
+            let quizHTML = '';
+            allQuizzes[moduleIndex].forEach((q, qIndex) => {
+                quizHTML += `<div class="mb-4">
+                    <p class="font-bold mb-2 text-white">Q${qIndex + 1}: ${q.question}</p>
+                    <ul class="space-y-2">`;
+                q.options.forEach((option, oIndex) => {
+                    quizHTML += `<li class="quiz-option bg-gray-800 p-3 rounded-md" data-question="${qIndex}" data-option="${oIndex}">${option}</li>`;
+                });
+                quizHTML += `</ul>
+                </div>`;
+            });
+            document.getElementById(quizContainerId).innerHTML = quizHTML;
+            quizContainers[moduleIndex] = document.getElementById(quizContainerId);
+            quizContainers[moduleIndex].addEventListener('click', handleOptionClick);
+        }
+
+        function handleOptionClick(event) {
+            const target = event.target.closest('.quiz-option');
+            if (!target) return;
+            const questionIndex = parseInt(target.dataset.question);
+            const container = target.closest('.quiz-container');
+            const options = container.querySelectorAll(`[data-question="${questionIndex}"]`);
+            options.forEach(opt => opt.classList.remove('bg-matrix-green'));
+            target.classList.add('bg-matrix-green');
+        }
+
+        function runQuiz(moduleIndex) {
+            const questions = allQuizzes[moduleIndex];
+            let correctAnswers = 0;
+            const resultsDiv = document.getElementById(`quiz${moduleIndex}-results`);
+            resultsDiv.innerHTML = '';
+
+            questions.forEach((q, qIndex) => {
+                const selectedOption = quizContainers[moduleIndex].querySelector(`.quiz-option[data-question="${qIndex}"].bg-matrix-green`);
+                const isCorrect = selectedOption && parseInt(selectedOption.dataset.option) === q.correct;
+                const resultText = document.createElement('p');
+
+                if (isCorrect) {
+                    correctAnswers++;
+                    resultText.innerHTML = `✅ **Question ${qIndex + 1}: Correct!** ${q.explanation}`;
+                    selectedOption.classList.add('correct-answer');
+                    selectedOption.classList.remove('bg-matrix-green');
+                } else {
+                    resultText.innerHTML = `❌ **Question ${qIndex + 1}: Incorrect.** Correct answer was: "${q.options[q.correct]}". ${q.explanation}`;
+                    if (selectedOption) {
+                        selectedOption.classList.add('incorrect-answer');
+                        selectedOption.classList.remove('bg-matrix-green');
+                    }
+                    const correctOption = quizContainers[moduleIndex].querySelector(`.quiz-option[data-question="${qIndex}"][data-option="${q.correct}"]`);
+                    if (correctOption) {
+                         correctOption.classList.add('correct-answer');
+                    }
+                }
+                resultsDiv.appendChild(resultText);
+            });
+
+            const score = correctAnswers / questions.length;
+            quizScores[moduleIndex] = score;
+
+            const finalResult = document.createElement('h4');
+            const nextModuleBtn = document.getElementById('nextModuleBtn');
+            const previousModuleBtn = document.getElementById('previousModuleBtn');
+
+            if (score >= passingScore) {
+                finalResult.innerHTML = `**Quiz Passed!** You scored ${Math.round(score * 100)}%. You can now proceed to the next module.`;
+                finalResult.className = "text-xl font-bold text-green-400 mt-4";
+                if (nextModuleBtn) nextModuleBtn.classList.remove('next-button-locked');
+                
+            } else {
+                finalResult.innerHTML = `**Quiz Failed.** You scored ${Math.round(score * 100)}%. Please review the material and try again.`;
+                finalResult.className = "text-xl font-bold text-red-400 mt-4";
+                if (nextModuleBtn) nextModuleBtn.classList.add('next-button-locked');
+            }
+            resultsDiv.prepend(finalResult);
+            resultsDiv.classList.remove('hidden');
+        }
+
+        async function loadModuleContent(moduleIndex) {
+            const container = document.getElementById('course-content-container');
+            const moduleFileName = `module${moduleIndex}.html`;
+            const moduleUrl = `./modules/${moduleFileName}`;
+
+            try {
+                const response = await fetch(moduleUrl);
+                if (!response.ok) {
+                    throw new Error(`Failed to load module ${moduleIndex}: ${response.statusText}`);
+                }
+                const htmlContent = await response.text();
+                container.innerHTML = htmlContent;
+
+                if (allQuizzes[moduleIndex]) {
+                    loadQuiz(moduleIndex);
+                }
+
+                const nextModuleBtn = document.getElementById('nextModuleBtn');
+                const previousModuleBtn = document.getElementById('previousModuleBtn');
+
+                if (moduleIndex === 1) {
+                    previousModuleBtn.style.display = 'none';
+                } else {
+                    previousModuleBtn.style.display = 'block';
+                }
+
+                if (moduleIndex === totalModules) {
+                    nextModuleBtn.innerHTML = 'Finish Course';
+                } else {
+                    nextModuleBtn.innerHTML = 'Next Module';
+                }
+
+                if (quizScores[moduleIndex] && quizScores[moduleIndex] >= passingScore) {
+                    nextModuleBtn.classList.remove('next-button-locked');
+                } else {
+                    nextModuleBtn.classList.add('next-button-locked');
+                }
+
+            } catch (error) {
+                container.innerHTML = `<div class="text-red-500 font-bold">Error: ${error.message}</div>`;
+            }
+        }
+
+        function nextModule() {
+            if (currentModuleIndex < totalModules && quizScores[currentModuleIndex] >= passingScore) {
+                currentModuleIndex++;
+                updateProgressBar();
+                loadModuleContent(currentModuleIndex);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function previousModule() {
+            if (currentModuleIndex > 1) {
+                currentModuleIndex--;
+                updateProgressBar();
+                loadModuleContent(currentModuleIndex);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function updateProgressBar() {
+            const progress = (currentModuleIndex / totalModules) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        window.onload = () => {
+            currentModuleIndex = 1;
+            updateProgressBar();
+            loadModuleContent(currentModuleIndex);
+        };
+    </script>
+</body>
+</html>
