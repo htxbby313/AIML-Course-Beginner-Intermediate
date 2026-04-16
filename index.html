@@ -3,360 +3,570 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI & Machine Learning Mastery Course</title>
+    <title>AI & ML Mastery Course — Go From Zero to Job-Ready</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Gumroad overlay script — required for the buy button -->
+    <script src="https://gumroad.com/js/gumroad.js"></script>
     <style>
+        * { box-sizing: border-box; }
         body {
             font-family: 'Roboto Mono', monospace;
             background-color: #0d1117;
-            color: #00ff41;
-            padding: 2rem;
-            min-height: 100vh;
+            color: #c9d1d9;
+            margin: 0;
+            padding: 0;
         }
-        .container { max-width: 1200px; }
-        .text-neon-green { color: #00ff41; }
-        .bg-matrix-green { background-color: #004d00; }
-        .border-neon-green { border-color: #00ff41; }
-        .bg-terminal-code { background-color: #001a00; }
-        .progress-bar {
-            position: fixed;
+        .neon { color: #00ff41; }
+        .neon-dim { color: #00cc33; }
+        .neon-text-shadow { text-shadow: 0 0 12px #00ff41, 0 0 5px #00ff41; }
+        .neon-border { border-color: #00ff41; }
+        .bg-dark { background-color: #0d1117; }
+        .bg-card { background-color: #0f1f0f; }
+        .bg-darker { background-color: #080d08; }
+
+        /* NAV */
+        nav {
+            position: sticky;
             top: 0;
-            left: 0;
-            height: 4px;
-            background-color: #00ff41;
-            box-shadow: 0 0 10px #00ff41, 0 0 5px #00ff41;
-            transition: width 0.5s ease-in-out;
-            z-index: 50;
+            z-index: 100;
+            background-color: rgba(13, 17, 23, 0.95);
+            border-bottom: 1px solid #00ff4130;
+            backdrop-filter: blur(8px);
         }
-        .quiz-option {
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            line-height: 1.5;
-        }
-        .quiz-option:hover {
-            transform: scale(1.01);
-            box-shadow: 0 0 5px #00ff41;
-        }
-        .explanation {
-            font-size: 0.875rem;
-            color: #00e63c;
-        }
-        .correct-answer { background-color: #008000 !important; }
-        .incorrect-answer { background-color: #b30000 !important; }
-        pre {
-            border: 1px solid #00ff41;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
-            font-size: 0.875rem;
-            line-height: 1.4;
-        }
-        .course-title {
-            font-size: 3rem;
+
+        /* HERO */
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
             font-weight: 700;
-            text-align: center;
-            margin-bottom: 2rem;
+            line-height: 1.15;
             color: #00ff41;
-            text-shadow: 0 0 15px #00ff41, 0 0 7px #00ff41;
-            line-height: 1.2;
+            text-shadow: 0 0 20px #00ff41, 0 0 8px #00ff41;
         }
-        .module-content h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-top: 3rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #00ff41;
-            color: #00ff41;
-            text-shadow: 0 0 10px #00ff41;
-        }
-        .module-content h3 {
-            font-size: 1.75rem;
-            font-style: italic;
-            font-weight: 700;
-            margin-top: 2.5rem;
-            margin-bottom: 1rem;
-            color: #00e63c;
-            text-shadow: 0 0 5px #00e63c;
-        }
-        .module-content h4 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            color: #00e63c;
-        }
-        .module-content p {
-            margin-bottom: 1.25rem;
+        .hero-sub {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: #8b949e;
             line-height: 1.7;
         }
-        .jupyter-markdown, .jupyter-code {
-            margin-top: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .quiz-container {
-            border: 1px solid #00ff41;
-            margin-top: 3.5rem;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
-        }
-        .action-button {
-            background-color: #004d00;
+        .tag {
+            display: inline-block;
+            background: #001a00;
             color: #00ff41;
-            border: 1px solid #00ff41;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.375rem;
-            transition: all 0.2s;
+            border: 1px solid #00ff4150;
+            border-radius: 4px;
+            padding: 2px 10px;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* CTA BUTTON */
+        .btn-primary {
+            display: inline-block;
+            background-color: #00ff41;
+            color: #0d1117;
+            font-family: 'Roboto Mono', monospace;
             font-weight: 700;
+            font-size: 1.1rem;
             letter-spacing: 0.05em;
+            padding: 1rem 2.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            box-shadow: 0 0 20px #00ff4160;
         }
-        .action-button:hover {
-            box-shadow: 0 0 15px #00ff41;
-            background-color: #006600;
+        .btn-primary:hover {
+            background-color: #00e639;
+            box-shadow: 0 0 35px #00ff4180;
+            transform: translateY(-1px);
         }
-        .module-view { display: none; }
-        .module-view.active { display: block; }
-        .next-button-locked {
-            pointer-events: none;
-            opacity: 0.4;
-            box-shadow: none;
-            cursor: not-allowed;
+        .btn-secondary {
+            display: inline-block;
+            background: transparent;
+            color: #00ff41;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 0.05em;
+            padding: 0.9rem 2.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            border: 2px solid #00ff41;
+            transition: all 0.2s;
         }
-        .module-view::-webkit-scrollbar {
-            display: none;
-            width: 0 !important;
+        .btn-secondary:hover {
+            background: #00ff4115;
+            box-shadow: 0 0 15px #00ff4140;
         }
-        .module-view {
-            scrollbar-width: none;
+
+        /* CARDS */
+        .feature-card {
+            background: #0f1f0f;
+            border: 1px solid #00ff4130;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .feature-card:hover {
+            border-color: #00ff4170;
+            box-shadow: 0 0 20px #00ff4120;
+        }
+        .module-card {
+            background: #080d08;
+            border: 1px solid #00ff4120;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .module-card:hover { border-color: #00ff4150; }
+        .module-num {
+            background: #001a00;
+            color: #00ff41;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid #00ff4120;
+        }
+
+        /* ACCORDION */
+        .accordion-item { border-bottom: 1px solid #00ff4120; }
+        .accordion-trigger {
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            color: #c9d1d9;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1rem;
+            padding: 1.25rem 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion-trigger:hover { color: #00ff41; }
+        .accordion-content { display: none; padding-bottom: 1rem; color: #8b949e; line-height: 1.7; }
+        .accordion-content.open { display: block; }
+        .accordion-arrow { transition: transform 0.2s; font-size: 0.9rem; color: #00ff41; }
+        .accordion-arrow.open { transform: rotate(180deg); }
+
+        /* DIVIDER */
+        .neon-divider {
+            border: none;
+            border-top: 1px solid #00ff4125;
+            margin: 0;
+        }
+
+        /* TERMINAL BLOCK */
+        .terminal {
+            background: #010a01;
+            border: 1px solid #00ff4140;
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            box-shadow: 0 0 20px #00ff4110;
+        }
+        .terminal-line { color: #8b949e; }
+        .terminal-line .prompt { color: #00ff41; }
+        .terminal-line .output { color: #c9d1d9; }
+
+        /* CHECKLIST */
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: #c9d1d9;
+        }
+        .check-icon { color: #00ff41; flex-shrink: 0; margin-top: 2px; }
+
+        /* PRICE CARD */
+        .price-card {
+            background: #0f1f0f;
+            border: 2px solid #00ff41;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 0 40px #00ff4130;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0d1117; }
+        ::-webkit-scrollbar-thumb { background: #00ff4140; border-radius: 3px; }
+
+        /* GUMROAD BUTTON OVERRIDE */
+        .gumroad-button {
+            background-color: #00ff41 !important;
+            color: #0d1117 !important;
+            font-family: 'Roboto Mono', monospace !important;
+            font-weight: 700 !important;
+            font-size: 1.1rem !important;
+            letter-spacing: 0.05em !important;
+            padding: 1rem 2.5rem !important;
+            border-radius: 6px !important;
+            box-shadow: 0 0 20px #00ff4160 !important;
         }
     </style>
 </head>
 <body>
-    <div class="container mx-auto p-8 bg-matrix-green rounded-lg shadow-md border border-neon-green">
-        <div class="progress-bar" id="progressBar"></div>
 
-        <header class="course-title">
-            AI & Machine Learning Mastery Course
-        </header>
-
-        <div id="course-content-container" class="space-y-16">
-            <!-- Content will be loaded here dynamically -->
-        </div>
-
-        <div class="flex justify-between mt-10" id="navigation-buttons-container">
-            <button id="previousModuleBtn" onclick="previousModule()" class="action-button" style="display: none;">Previous Module</button>
-            <button id="nextModuleBtn" onclick="nextModule()" class="action-button next-button-locked">Next Module</button>
+<!-- ═══════════════════════════════ NAV ═══════════════════════════════ -->
+<nav>
+    <div style="max-width:1200px; margin:0 auto; padding:0 1.5rem; display:flex; justify-content:space-between; align-items:center; height:56px;">
+        <span class="neon" style="font-weight:700; font-size:0.95rem; letter-spacing:0.08em;">AI&ML.MASTERY</span>
+        <div style="display:flex; gap:1rem; align-items:center;">
+            <a href="#curriculum" style="color:#8b949e; text-decoration:none; font-size:0.85rem; transition:color 0.2s;" onmouseover="this.style.color='#00ff41'" onmouseout="this.style.color='#8b949e'">Curriculum</a>
+            <a href="#pricing" style="color:#8b949e; text-decoration:none; font-size:0.85rem; transition:color 0.2s;" onmouseover="this.style.color='#00ff41'" onmouseout="this.style.color='#8b949e'">Pricing</a>
+            <a href="course.html" class="btn-secondary" style="padding:0.4rem 1rem; font-size:0.8rem;">Preview Course</a>
         </div>
     </div>
+</nav>
 
-    <script>
-        let currentModuleIndex = 0;
-        const totalModules = 6;
-        const quizScores = {};
-        const passingScore = 0.8;
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<section style="padding: 6rem 1.5rem 5rem; max-width:1100px; margin:0 auto;">
+    <div style="max-width:720px; margin:0 auto; text-align:center;">
+        <span class="tag" style="margin-bottom:1.5rem; display:inline-block;">6 Modules · Beginner Friendly · Hands-On Code</span>
+        <h1 class="hero-title" style="margin:1rem 0 1.5rem;">Break Into AI &amp; Machine Learning — No CS Degree Required</h1>
+        <p class="hero-sub" style="margin-bottom:2.5rem;">
+            A complete, project-driven course that takes you from zero Python experience to building real AI systems — the skills companies are hiring for right now.
+        </p>
+        <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+            <!-- GUMROAD BUY BUTTON
+                 Replace YOUR_PRODUCT_ID with your Gumroad product permalink.
+                 In Gumroad: Product → Share → Copy permalink (e.g. "abcde") -->
+            <a class="gumroad-button" href="https://gumroad.com/l/YOUR_PRODUCT_ID" data-gumroad-overlay="true">Enroll Now</a>
+            <a href="course.html" class="btn-secondary">Preview Free →</a>
+        </div>
+        <p style="margin-top:1.25rem; color:#8b949e; font-size:0.8rem;">One-time payment · Lifetime access · Instant delivery</p>
+    </div>
 
-        const allQuizzes = {
-            1: [
-                { question: "Which of the following is the broadest concept?", options: ["Deep Learning", "Artificial Intelligence (AI)", "Machine Learning (ML)", "Robotics"], correct: 1, explanation: "Artificial Intelligence is the overarching field, with Machine Learning as a subset and Deep Learning as a subset of ML." },
-                { question: "What is the primary goal of Supervised Learning?", options: ["To find hidden patterns in unlabeled data", "To learn from labeled data to make predictions on new data", "To learn by interacting with an environment through rewards and penalties", "To create new features from existing data"], correct: 1, explanation: "Supervised learning models are trained on labeled datasets, where each data point is tagged with a correct output." },
-                { question: "An algorithm that groups customers into segments based on their purchasing habits without any prior labels is an example of:", options: ["Supervised Learning", "Reinforcement Learning", "Unsupervised Learning", "Deep Learning"], correct: 2, explanation: "Unsupervised learning is used to find hidden patterns or structures within unlabeled data." },
-                { question: "What is the primary purpose of the NumPy library in an AI/ML environment?", options: ["To create interactive visualizations", "To manage software packages and environments", "To perform efficient numerical computations with multi-dimensional arrays", "To build and train deep neural networks"], correct: 2, explanation: "NumPy is a fundamental package for numerical computation in Python and provides support for large, multi-dimensional arrays and matrices." },
-                { question: "Which term is best described as 'training a machine to play a game by rewarding it for winning and penalizing it for losing'?", options: ["Supervised Learning", "Unsupervised Learning", "Reinforcement Learning", "Transfer Learning"], correct: 2, explanation: "Reinforcement learning models learn by interacting with an environment and receiving rewards or penalties." }
-            ],
-            2: [
-                { question: "From Module 1: What is the relationship between AI, ML, and DL?", options: ["AI and ML are the same, with DL being a subset.", "ML is a subset of AI, and DL is a subset of ML.", "DL is a subset of AI, and ML is a subset of DL.", "They are three unrelated fields."], correct: 1, explanation: "AI is the broadest concept, followed by ML, and then DL as a more specialized subset of ML." },
-                { question: "What is the primary purpose of data preprocessing in machine learning?", options: ["To make the data look visually appealing in charts", "To prepare and transform raw data into a suitable format for ML algorithms", "To reduce the amount of data to save storage space", "To encrypt sensitive information in the dataset"], correct: 1, explanation: "Data preprocessing transforms raw data into a clean, structured format that ML algorithms can effectively use, improving model performance and reliability." },
-                { question: "Which metric is most appropriate for evaluating a regression model?", options: ["Accuracy", "Precision", "Mean Squared Error (MSE)", "F1 Score"], correct: 2, explanation: "Mean Squared Error (MSE) measures the average squared difference between predicted and actual values, making it suitable for regression tasks where we predict continuous values." },
-                { question: "What does the term 'feature engineering' refer to?", options: ["The process of selecting which machine learning algorithm to use", "Creating new features from existing data to improve model performance", "Engineering a system to automatically collect more data", "The process of tuning model hyperparameters"], correct: 1, explanation: "Feature engineering involves creating new features from existing data to help the model better understand patterns, which can significantly improve model performance." },
-                { question: "What is the difference between overfitting and underfitting?", options: ["Overfitting is when the model is too simple, underfitting is when it is too complex.", "Overfitting occurs on test data, while underfitting occurs on training data.", "Overfitting is when the model learns noise in the data, underfitting is when it fails to capture the underlying pattern.", "There is no difference; they are different terms for the same concept."], correct: 2, explanation: "Overfitting results in a model that performs well on training data but poorly on unseen data. Underfitting is when the model is too simple and performs poorly on both." }
-            ],
-            3: [
-                { question: "From Module 2: A confusion matrix is used to evaluate the performance of which type of model?", options: ["Regression", "Clustering", "Classification", "Anomaly Detection"], correct: 2, explanation: "A confusion matrix shows the number of true positives, false positives, true negatives, and false negatives for a classification model." },
-                { question: "What is the primary purpose of a neural network's activation function?", options: ["To add non-linearity to the network's output", "To speed up the training process", "To increase the number of layers", "To handle missing data"], correct: 0, explanation: "Activation functions introduce non-linearity, allowing the network to learn more complex, non-linear patterns in the data." },
-                { question: "Which algorithm is used in deep learning to efficiently update a neural network's weights during training?", options: ["K-Means", "Logistic Regression", "Backpropagation", "Decision Trees"], correct: 2, explanation: "Backpropagation is the key algorithm that calculates and propagates the error gradients backward through the network to update the weights." },
-                { question: "In a CNN, what is the main purpose of a 'convolutional layer'?", options: ["To reduce the spatial dimensions of the feature maps", "To flatten the input data into a single vector", "To extract features like edges and textures from the input image", "To apply a non-linear activation function to the data"], correct: 2, explanation: "Convolutional layers apply filters to the image to automatically learn and extract hierarchical features." },
-                { question: "What is a major benefit of using transfer learning?", options: ["It requires a larger dataset to achieve good performance.", "It makes the model less complex and easier to interpret.", "It significantly reduces training time and can lead to better performance with limited data.", "It is only used for unsupervised learning tasks."], correct: 2, explanation: "Transfer learning leverages a pre-trained model on a large dataset, allowing you to fine-tune it for a related task with much less data and computational resources." }
-            ],
-            4: [
-                { question: "From Module 3: What is the main purpose of a 'hidden layer' in a neural network?", options: ["To receive the raw input data", "To perform complex computations and transformations on the data", "To produce the final prediction", "To manage the network's overall structure"], correct: 1, explanation: "Hidden layers are where the primary computations happen, allowing the network to learn intricate patterns from the data." },
-                { question: "What is the main difference between stemming and lemmatization?", options: ["Stemming is a more accurate process that considers context.", "Lemmatization is faster but less accurate.", "Stemming is a crude process that often chops off the end of words, while lemmatization reduces words to their meaningful base form.", "They are two different names for the exact same process."], correct: 2, explanation: "Lemmatization is a more sophisticated process that uses a dictionary to find the root form, whereas stemming is a heuristic that may result in non-words." },
-                { question: "What is a 'word embedding'?", options: ["A method to count word frequencies", "A binary representation of a word", "A numerical vector that captures a word's meaning and relationships", "A list of stop words"], correct: 2, explanation: "Word embeddings allow machine learning models to understand the semantic relationships between words by representing them as dense vectors in a high-dimensional space." },
-                { question: "Which NLP task involves assigning a sentiment (e.g., positive, negative, neutral) to a piece of text?", options: ["Text Classification", "Machine Translation", "Sentiment Analysis", "Named Entity Recognition"], correct: 2, explanation: "Sentiment analysis is a specific type of text classification where the goal is to determine the emotional tone of the text." },
-                { question: "What is a key feature of the Transformer architecture?", options: ["It uses a single, massive recurrent layer.", "It relies on a self-attention mechanism to weigh the importance of different words.", "It is designed only for text generation tasks.", "It is the predecessor to simple RNNs."], correct: 1, explanation: "The self-attention mechanism is what makes the Transformer so effective at understanding context and relationships in long sequences of text." }
-            ],
-            5: [
-                { question: "From Module 4: What is the purpose of lemmatization?", options: ["To convert text into images for computer vision models.", "To reduce a word to its crude root form by chopping off its end.", "To remove common words like 'the' and 'a' from text.", "To reduce a word to its meaningful base form considering its context."], correct: 3, explanation: "Lemmatization is a sophisticated text preprocessing step that reduces words to their meaningful base or dictionary form, unlike stemming which is a crude process." },
-                { question: "What is the main function of an image's 'channels' in the RGB model?", options: ["To represent the image's resolution.", "To determine the image's brightness.", "To represent the intensity of red, green, and blue colors.", "To compress the image file size."], correct: 2, explanation: "In the RGB model, each channel corresponds to one of the primary colors (Red, Green, or Blue) and stores its intensity value for each pixel." },
-                { question: "Which image preprocessing technique helps prevent a model from overfitting to the training data?", options: ["Resizing", "Grayscale conversion", "Augmentation", "Normalization"], correct: 2, explanation: "Image augmentation creates new training examples by applying random transformations (like rotation or flipping) to existing images, increasing data diversity and helping the model generalize better." },
-                { question: "What is the key difference between Object Detection and Image Segmentation?", options: ["Object detection identifies and locates objects with a bounding box, while segmentation classifies each pixel.", "Object detection is only for video, while segmentation is for static images.", "Segmentation is an older technique than object detection.", "They are the same process, just with a different name."], correct: 0, explanation: "Object detection aims to find objects in an image and draw a bounding box around them. Image segmentation is more granular; it classifies every single pixel in an image to determine what object it belongs to, providing more precise outlines." },
-                { question: "What is a major benefit of using a pre-trained model for computer vision?", options: ["It requires a larger training dataset.", "It is always more accurate than a custom-trained model.", "It allows you to get good performance with less data and computational power.", "It can only be used for image classification tasks."], correct: 2, explanation: "Pre-trained models have learned a wealth of features from large public datasets. This saves you time and resources, as you only need to fine-tune the model for your specific task." }
-            ],
-            6: [
-                { question: "From Module 5: What is the primary purpose of image normalization?", options: ["To convert an image from RGB to grayscale.", "To reduce the image file size.", "To resize the image to a standard dimension.", "To scale pixel values to a fixed range (e.g., 0 to 1)"], correct: 3, explanation: "Normalization scales pixel values to a standard range, which helps to stabilize and accelerate the training of neural networks." },
-                { question: "What are the three main components of a Reinforcement Learning problem?", options: ["Input, Hidden Layer, Output", "Data, Model, Prediction", "Agent, Environment, Reward", "Text, Image, Audio"], correct: 2, explanation: "An RL agent learns by interacting with an environment, and receives rewards for desired behaviors, which guides its learning process." },
-                { question: "Which of the following is an example of Generative AI?", options: ["A model that predicts house prices based on features.", "A system that classifies emails as spam or not spam.", "A model that generates new, realistic images of human faces.", "A system that clusters customer data into segments."], correct: 2, explanation: "Generative AI is a type of AI that generates new content, such as text, images, or audio, rather than analyzing or classifying existing data." },
-                { question: "What is the primary goal of MLOps?", options: ["To build more accurate machine learning models.", "To automate the entire machine learning lifecycle, from development to deployment.", "To reduce the amount of data needed for training.", "To create more interpretable models."], correct: 1, explanation: "MLOps focuses on the practices and tools needed to streamline the entire lifecycle of a machine learning project, enabling continuous delivery and deployment of models." },
-                { question: "What is the core purpose of the Capstone Project?", options: ["To create a simple, theoretical model.", "To learn about a single AI topic in depth.", "To apply all the concepts from the course to a real-world, comprehensive problem.", "To test your knowledge of reinforcement learning."], correct: 2, explanation: "A capstone project is the culminating experience of a course, allowing you to synthesize and apply all the learned skills in an end-to-end project." }
-            ]
-        };
+    <!-- Terminal teaser -->
+    <div class="terminal" style="max-width:680px; margin:4rem auto 0;">
+        <div style="display:flex; gap:6px; margin-bottom:1rem;">
+            <div style="width:12px;height:12px;border-radius:50%;background:#ff5f57;"></div>
+            <div style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;"></div>
+            <div style="width:12px;height:12px;border-radius:50%;background:#28c840;"></div>
+        </div>
+        <div class="terminal-line"><span class="prompt">$</span> <span class="output">python predict_salary.py</span></div>
+        <div class="terminal-line" style="color:#8b949e; padding-left:1rem;">> Loading model... Done ✓</div>
+        <div class="terminal-line" style="color:#8b949e; padding-left:1rem;">> Input years_experience=2, degree='none'</div>
+        <div class="terminal-line" style="color:#00ff41; padding-left:1rem;">> Predicted salary: $78,400</div>
+        <div class="terminal-line" style="color:#8b949e; padding-left:1rem;">> Model accuracy: 91.3%</div>
+        <div class="terminal-line" style="margin-top:0.75rem;"><span class="prompt">$</span> <span style="color:#00ff41;">█</span></div>
+    </div>
+</section>
 
-        const quizContainers = {};
+<hr class="neon-divider">
 
-        function loadQuiz(moduleIndex) {
-            const quizContainerId = `quiz${moduleIndex}-questions`;
-            let quizHTML = '';
-            allQuizzes[moduleIndex].forEach((q, qIndex) => {
-                quizHTML += `<div class="mb-4">
-                    <p class="font-bold mb-2 text-white">Q${qIndex + 1}: ${q.question}</p>
-                    <ul class="space-y-2">`;
-                q.options.forEach((option, oIndex) => {
-                    quizHTML += `<li class="quiz-option bg-gray-800 p-3 rounded-md" data-question="${qIndex}" data-option="${oIndex}">${option}</li>`;
-                });
-                quizHTML += `</ul>
-                </div>`;
-            });
-            document.getElementById(quizContainerId).innerHTML = quizHTML;
-            quizContainers[moduleIndex] = document.getElementById(quizContainerId);
-            quizContainers[moduleIndex].addEventListener('click', handleOptionClick);
+<!-- ═══════════════════════════════ PAIN POINTS ═══════════════════════════════ -->
+<section style="padding:5rem 1.5rem; max-width:1100px; margin:0 auto;">
+    <h2 style="text-align:center; color:#00ff41; font-size:1.75rem; font-weight:700; margin-bottom:1rem;">Sound Familiar?</h2>
+    <p style="text-align:center; color:#8b949e; margin-bottom:3rem; max-width:560px; margin-left:auto; margin-right:auto; line-height:1.7;">
+        Most people who want to get into AI hit the same walls.
+    </p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem;">
+        <div class="feature-card">
+            <div style="color:#ff6b6b; font-size:1.5rem; margin-bottom:0.75rem;">⚠</div>
+            <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.5rem;">Tutorials that go nowhere</h3>
+            <p style="color:#8b949e; font-size:0.875rem; margin:0; line-height:1.6;">You finish a YouTube series and still don't know how to build something real or explain it in an interview.</p>
+        </div>
+        <div class="feature-card">
+            <div style="color:#ff6b6b; font-size:1.5rem; margin-bottom:0.75rem;">⚠</div>
+            <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.5rem;">Math-heavy courses that assume too much</h3>
+            <p style="color:#8b949e; font-size:0.875rem; margin:0; line-height:1.6;">Most courses jump straight into calculus and linear algebra before you've written a single line of ML code.</p>
+        </div>
+        <div class="feature-card">
+            <div style="color:#ff6b6b; font-size:1.5rem; margin-bottom:0.75rem;">⚠</div>
+            <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.5rem;">No project to show employers</h3>
+            <p style="color:#8b949e; font-size:0.875rem; margin:0; line-height:1.6;">Without a real portfolio project, your CV looks the same as everyone else who "completed a course."</p>
+        </div>
+    </div>
+</section>
+
+<hr class="neon-divider">
+
+<!-- ═══════════════════════════════ WHAT YOU GET ═══════════════════════════════ -->
+<section style="padding:5rem 1.5rem; max-width:1100px; margin:0 auto;">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center;">
+        <div>
+            <span class="tag" style="margin-bottom:1rem; display:inline-block;">What's Inside</span>
+            <h2 style="color:#00ff41; font-size:1.75rem; font-weight:700; margin:0.5rem 0 1.5rem; line-height:1.3;">Everything You Need. Nothing You Don't.</h2>
+            <div>
+                <div class="check-item"><span class="check-icon">▶</span><span><strong style="color:#c9d1d9;">6 progressive modules</strong> — each builds on the last, from basic Python to deploying a real ML model</span></div>
+                <div class="check-item"><span class="check-icon">▶</span><span><strong style="color:#c9d1d9;">Hands-on code in every module</strong> — copy-ready Python notebooks you run yourself</span></div>
+                <div class="check-item"><span class="check-icon">▶</span><span><strong style="color:#c9d1d9;">Quizzes with instant feedback</strong> — must score 80%+ to unlock the next module</span></div>
+                <div class="check-item"><span class="check-icon">▶</span><span><strong style="color:#c9d1d9;">Capstone project</strong> — build a Financial News Sentiment Dashboard end-to-end</span></div>
+                <div class="check-item"><span class="check-icon">▶</span><span><strong style="color:#c9d1d9;">Certificate of completion</strong> — shareable PDF to attach to your CV and LinkedIn</span></div>
+                <div class="check-item"><span class="check-icon">▶</span><span><strong style="color:#c9d1d9;">Lifetime access</strong> — including all future updates at no extra cost</span></div>
+            </div>
+        </div>
+        <div>
+            <div class="terminal">
+                <div style="display:flex; gap:6px; margin-bottom:1rem;">
+                    <div style="width:12px;height:12px;border-radius:50%;background:#ff5f57;"></div>
+                    <div style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;"></div>
+                    <div style="width:12px;height:12px;border-radius:50%;background:#28c840;"></div>
+                </div>
+                <div style="color:#8b949e; font-size:0.8rem; margin-bottom:0.5rem;"># Module 3: Deep Learning</div>
+                <div style="color:#c9d1d9; font-size:0.85rem; line-height:1.8;">
+                    <span style="color:#ff9800;">from</span> tensorflow.keras <span style="color:#ff9800;">import</span> Sequential<br>
+                    <span style="color:#ff9800;">from</span> tensorflow.keras.layers <span style="color:#ff9800;">import</span> Dense<br><br>
+                    model = Sequential([<br>
+                    &nbsp;&nbsp;Dense(<span style="color:#00e676;">64</span>, activation=<span style="color:#69f0ae;">'relu'</span>),<br>
+                    &nbsp;&nbsp;Dense(<span style="color:#00e676;">32</span>, activation=<span style="color:#69f0ae;">'relu'</span>),<br>
+                    &nbsp;&nbsp;Dense(<span style="color:#00e676;">1</span>, activation=<span style="color:#69f0ae;">'sigmoid'</span>)<br>
+                    ])<br><br>
+                    <span style="color:#8b949e;"># 94.2% accuracy on test set</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="neon-divider">
+
+<!-- ═══════════════════════════════ CURRICULUM ═══════════════════════════════ -->
+<section id="curriculum" style="padding:5rem 1.5rem; max-width:1100px; margin:0 auto;">
+    <span class="tag" style="display:block; text-align:center; margin-bottom:1rem;">The Curriculum</span>
+    <h2 style="text-align:center; color:#00ff41; font-size:1.75rem; font-weight:700; margin-bottom:0.75rem;">6 Modules. One Complete Skillset.</h2>
+    <p style="text-align:center; color:#8b949e; margin-bottom:3rem; max-width:560px; margin-left:auto; margin-right:auto; line-height:1.7;">
+        Each module ends with a quiz. Pass at 80%+ to unlock the next — no skipping ahead, no gaps in your knowledge.
+    </p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:1.25rem;">
+        <div class="module-card">
+            <div class="module-num">MODULE 01 — Foundations</div>
+            <div style="padding:1.25rem;">
+                <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.75rem;">AI/ML Foundations</h3>
+                <ul style="color:#8b949e; font-size:0.875rem; margin:0; padding-left:1.25rem; line-height:1.9;">
+                    <li>What is AI, ML & Deep Learning</li>
+                    <li>Supervised, Unsupervised & Reinforcement Learning</li>
+                    <li>Python, NumPy & Pandas setup</li>
+                    <li>Your first data analysis script</li>
+                </ul>
+            </div>
+        </div>
+        <div class="module-card">
+            <div class="module-num">MODULE 02 — Core ML</div>
+            <div style="padding:1.25rem;">
+                <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.75rem;">Core Machine Learning</h3>
+                <ul style="color:#8b949e; font-size:0.875rem; margin:0; padding-left:1.25rem; line-height:1.9;">
+                    <li>Data cleaning & preprocessing</li>
+                    <li>Linear & Logistic Regression</li>
+                    <li>Decision Trees & Random Forests</li>
+                    <li>Model evaluation (accuracy, MSE, F1)</li>
+                </ul>
+            </div>
+        </div>
+        <div class="module-card">
+            <div class="module-num">MODULE 03 — Deep Learning</div>
+            <div style="padding:1.25rem;">
+                <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.75rem;">Neural Networks & Deep Learning</h3>
+                <ul style="color:#8b949e; font-size:0.875rem; margin:0; padding-left:1.25rem; line-height:1.9;">
+                    <li>How neural networks actually work</li>
+                    <li>Building networks with Keras/TensorFlow</li>
+                    <li>Convolutional Neural Networks (CNNs)</li>
+                    <li>Transfer learning with pre-trained models</li>
+                </ul>
+            </div>
+        </div>
+        <div class="module-card">
+            <div class="module-num">MODULE 04 — NLP</div>
+            <div style="padding:1.25rem;">
+                <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.75rem;">Natural Language Processing</h3>
+                <ul style="color:#8b949e; font-size:0.875rem; margin:0; padding-left:1.25rem; line-height:1.9;">
+                    <li>Tokenization, stemming & lemmatization</li>
+                    <li>Word embeddings (Word2Vec)</li>
+                    <li>Sentiment analysis</li>
+                    <li>Introduction to Transformers & BERT</li>
+                </ul>
+            </div>
+        </div>
+        <div class="module-card">
+            <div class="module-num">MODULE 05 — Computer Vision</div>
+            <div style="padding:1.25rem;">
+                <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.75rem;">Computer Vision</h3>
+                <ul style="color:#8b949e; font-size:0.875rem; margin:0; padding-left:1.25rem; line-height:1.9;">
+                    <li>Images as data: pixels & channels</li>
+                    <li>Image preprocessing & augmentation</li>
+                    <li>CNN-based image classification</li>
+                    <li>Object detection overview (YOLO)</li>
+                </ul>
+            </div>
+        </div>
+        <div class="module-card">
+            <div class="module-num">MODULE 06 — Advanced + Capstone</div>
+            <div style="padding:1.25rem;">
+                <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.75rem;">Advanced Topics & Capstone</h3>
+                <ul style="color:#8b949e; font-size:0.875rem; margin:0; padding-left:1.25rem; line-height:1.9;">
+                    <li>Reinforcement Learning & GANs</li>
+                    <li>MLOps & model deployment</li>
+                    <li>Generative AI & LLMs explained</li>
+                    <li>Capstone: Financial Sentiment Dashboard</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="neon-divider">
+
+<!-- ═══════════════════════════════ WHO THIS IS FOR ═══════════════════════════════ -->
+<section style="padding:5rem 1.5rem; max-width:1100px; margin:0 auto;">
+    <h2 style="text-align:center; color:#00ff41; font-size:1.75rem; font-weight:700; margin-bottom:3rem;">This Course is For You If...</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; max-width:800px; margin:0 auto;">
+        <div>
+            <h3 style="color:#00ff41; font-size:0.9rem; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1.25rem;">Good Fit ✓</h3>
+            <div class="check-item"><span class="check-icon">✓</span><span>You're changing careers and want to break into tech / AI</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>You know basic Python or are willing to pick it up</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>You want practical code, not just theory</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>You want a portfolio project to show employers</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>You learn best by doing, not watching lectures</span></div>
+        </div>
+        <div>
+            <h3 style="color:#ff6b6b; font-size:0.9rem; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1.25rem;">Not the Right Fit ✗</h3>
+            <div class="check-item"><span style="color:#ff6b6b; flex-shrink:0; margin-top:2px;">✗</span><span>You need a PhD-level mathematical treatment</span></div>
+            <div class="check-item"><span style="color:#ff6b6b; flex-shrink:0; margin-top:2px;">✗</span><span>You're an experienced ML engineer looking for advanced research techniques</span></div>
+            <div class="check-item"><span style="color:#ff6b6b; flex-shrink:0; margin-top:2px;">✗</span><span>You want someone else to do the coding for you</span></div>
+        </div>
+    </div>
+</section>
+
+<hr class="neon-divider">
+
+<!-- ═══════════════════════════════ PRICING ═══════════════════════════════ -->
+<section id="pricing" style="padding:5rem 1.5rem; max-width:1100px; margin:0 auto;">
+    <h2 style="text-align:center; color:#00ff41; font-size:1.75rem; font-weight:700; margin-bottom:0.75rem;">One Price. Everything Included.</h2>
+    <p style="text-align:center; color:#8b949e; margin-bottom:3rem;">No subscriptions. No upsells. No drip-fed content.</p>
+
+    <div class="price-card">
+        <div style="text-align:center; margin-bottom:2rem;">
+            <div class="tag" style="margin-bottom:1rem;">Full Course Access</div>
+            <!-- Update this price when you set it in Gumroad -->
+            <div style="font-size:3rem; font-weight:700; color:#00ff41; text-shadow:0 0 15px #00ff41; line-height:1;">$49</div>
+            <div style="color:#8b949e; font-size:0.85rem; margin-top:0.5rem;">one-time · no recurring fees</div>
+        </div>
+
+        <div style="margin-bottom:2rem;">
+            <div class="check-item"><span class="check-icon">✓</span><span>All 6 modules with expanded content</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>6 quizzes with detailed answer explanations</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>All Python code notebooks (copy & run instantly)</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>Capstone project: Financial Sentiment Dashboard</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>Downloadable Certificate of Completion</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>Lifetime access + all future updates</span></div>
+        </div>
+
+        <div style="text-align:center;">
+            <!-- Replace YOUR_PRODUCT_ID with your Gumroad product permalink -->
+            <a class="gumroad-button" href="https://gumroad.com/l/YOUR_PRODUCT_ID" data-gumroad-overlay="true" style="width:100%; display:block; text-align:center; text-decoration:none;">
+                Enroll Now — $49
+            </a>
+            <p style="color:#8b949e; font-size:0.8rem; margin-top:1rem;">Secure checkout via Gumroad · Instant access</p>
+        </div>
+    </div>
+</section>
+
+<hr class="neon-divider">
+
+<!-- ═══════════════════════════════ FAQ ═══════════════════════════════ -->
+<section style="padding:5rem 1.5rem; max-width:760px; margin:0 auto;">
+    <h2 style="text-align:center; color:#00ff41; font-size:1.75rem; font-weight:700; margin-bottom:3rem;">Frequently Asked Questions</h2>
+
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            Do I need a maths or CS degree?
+            <span class="accordion-arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+            No. This course is designed for complete beginners. We explain the intuition behind every concept before touching code. You don't need a degree — just curiosity and a willingness to practise.
+        </div>
+    </div>
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            What Python knowledge do I need?
+            <span class="accordion-arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+            Basic Python is helpful — things like variables, loops, and functions. If you're completely new to Python, Module 1 includes a setup guide and links to free resources to get you up to speed in a weekend.
+        </div>
+    </div>
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            How does the course work technically?
+            <span class="accordion-arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+            After purchase you get access to the course instantly. It runs in your browser — no app to install. Code examples are copy-ready; you run them in a local Jupyter Notebook or Google Colab (free). Your progress is saved automatically.
+        </div>
+    </div>
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            What's in the Capstone project?
+            <span class="accordion-arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+            You'll build a Financial News Sentiment Dashboard from scratch: scraping headlines, cleaning text, training a sentiment classifier, and displaying results. It's a real, deployable project you can put on your CV and GitHub.
+        </div>
+    </div>
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            Is there a refund policy?
+            <span class="accordion-arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+            Yes. Gumroad offers a 30-day refund policy. If you're not satisfied for any reason, contact support within 30 days for a full refund — no questions asked.
+        </div>
+    </div>
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            Will this get me a job?
+            <span class="accordion-arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+            This course gives you the practical foundation and a portfolio project that entry-level AI/ML roles require. You'll still need to apply and interview, but you'll have the skills and evidence to back it up.
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ FINAL CTA ═══════════════════════════════ -->
+<section style="padding:5rem 1.5rem; background:#0f1f0f; border-top:1px solid #00ff4125; border-bottom:1px solid #00ff4125;">
+    <div style="max-width:700px; margin:0 auto; text-align:center;">
+        <h2 class="hero-title" style="font-size:clamp(1.5rem, 4vw, 2.5rem); margin-bottom:1.25rem;">Start Building. Start Earning.</h2>
+        <p style="color:#8b949e; margin-bottom:2.5rem; line-height:1.7;">
+            The AI job market is growing fast. The people who land those roles are the ones who started learning today.
+        </p>
+        <a class="gumroad-button" href="https://gumroad.com/l/YOUR_PRODUCT_ID" data-gumroad-overlay="true">
+            Enroll Now — $49
+        </a>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer style="padding:2rem 1.5rem; text-align:center; color:#8b949e; font-size:0.8rem; border-top:1px solid #00ff4115;">
+    <p style="margin:0;">AI &amp; ML Mastery Course · Sold via <a href="https://gumroad.com" style="color:#00ff41; text-decoration:none;">Gumroad</a> · All rights reserved</p>
+</footer>
+
+<script>
+    function toggleAccordion(btn) {
+        const content = btn.nextElementSibling;
+        const arrow = btn.querySelector('.accordion-arrow');
+        const isOpen = content.classList.contains('open');
+        // Close all
+        document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('open'));
+        document.querySelectorAll('.accordion-arrow').forEach(a => a.classList.remove('open'));
+        // Open clicked (if it was closed)
+        if (!isOpen) {
+            content.classList.add('open');
+            arrow.classList.add('open');
         }
-
-        function handleOptionClick(event) {
-            const target = event.target.closest('.quiz-option');
-            if (!target) return;
-            const questionIndex = parseInt(target.dataset.question);
-            const container = target.closest('.quiz-container');
-            const options = container.querySelectorAll(`[data-question="${questionIndex}"]`);
-            options.forEach(opt => opt.classList.remove('bg-matrix-green'));
-            target.classList.add('bg-matrix-green');
-        }
-
-        function runQuiz(moduleIndex) {
-            const questions = allQuizzes[moduleIndex];
-            let correctAnswers = 0;
-            const resultsDiv = document.getElementById(`quiz${moduleIndex}-results`);
-            resultsDiv.innerHTML = '';
-
-            questions.forEach((q, qIndex) => {
-                const selectedOption = quizContainers[moduleIndex].querySelector(`.quiz-option[data-question="${qIndex}"].bg-matrix-green`);
-                const isCorrect = selectedOption && parseInt(selectedOption.dataset.option) === q.correct;
-                const resultText = document.createElement('p');
-
-                if (isCorrect) {
-                    correctAnswers++;
-                    resultText.innerHTML = `✅ **Question ${qIndex + 1}: Correct!** ${q.explanation}`;
-                    selectedOption.classList.add('correct-answer');
-                    selectedOption.classList.remove('bg-matrix-green');
-                } else {
-                    resultText.innerHTML = `❌ **Question ${qIndex + 1}: Incorrect.** Correct answer was: "${q.options[q.correct]}". ${q.explanation}`;
-                    if (selectedOption) {
-                        selectedOption.classList.add('incorrect-answer');
-                        selectedOption.classList.remove('bg-matrix-green');
-                    }
-                    const correctOption = quizContainers[moduleIndex].querySelector(`.quiz-option[data-question="${qIndex}"][data-option="${q.correct}"]`);
-                    if (correctOption) {
-                         correctOption.classList.add('correct-answer');
-                    }
-                }
-                resultsDiv.appendChild(resultText);
-            });
-
-            const score = correctAnswers / questions.length;
-            quizScores[moduleIndex] = score;
-
-            const finalResult = document.createElement('h4');
-            const nextModuleBtn = document.getElementById('nextModuleBtn');
-            const previousModuleBtn = document.getElementById('previousModuleBtn');
-
-            if (score >= passingScore) {
-                finalResult.innerHTML = `**Quiz Passed!** You scored ${Math.round(score * 100)}%. You can now proceed to the next module.`;
-                finalResult.className = "text-xl font-bold text-green-400 mt-4";
-                if (nextModuleBtn) nextModuleBtn.classList.remove('next-button-locked');
-                
-            } else {
-                finalResult.innerHTML = `**Quiz Failed.** You scored ${Math.round(score * 100)}%. Please review the material and try again.`;
-                finalResult.className = "text-xl font-bold text-red-400 mt-4";
-                if (nextModuleBtn) nextModuleBtn.classList.add('next-button-locked');
-            }
-            resultsDiv.prepend(finalResult);
-            resultsDiv.classList.remove('hidden');
-        }
-
-        async function loadModuleContent(moduleIndex) {
-            const container = document.getElementById('course-content-container');
-            const moduleFileName = `module${moduleIndex}.html`;
-            const moduleUrl = `./modules/${moduleFileName}`;
-
-            try {
-                const response = await fetch(moduleUrl);
-                if (!response.ok) {
-                    throw new Error(`Failed to load module ${moduleIndex}: ${response.statusText}`);
-                }
-                const htmlContent = await response.text();
-                container.innerHTML = htmlContent;
-
-                if (allQuizzes[moduleIndex]) {
-                    loadQuiz(moduleIndex);
-                }
-
-                const nextModuleBtn = document.getElementById('nextModuleBtn');
-                const previousModuleBtn = document.getElementById('previousModuleBtn');
-
-                if (moduleIndex === 1) {
-                    previousModuleBtn.style.display = 'none';
-                } else {
-                    previousModuleBtn.style.display = 'block';
-                }
-
-                if (moduleIndex === totalModules) {
-                    nextModuleBtn.innerHTML = 'Finish Course';
-                } else {
-                    nextModuleBtn.innerHTML = 'Next Module';
-                }
-
-                if (quizScores[moduleIndex] && quizScores[moduleIndex] >= passingScore) {
-                    nextModuleBtn.classList.remove('next-button-locked');
-                } else {
-                    nextModuleBtn.classList.add('next-button-locked');
-                }
-
-            } catch (error) {
-                container.innerHTML = `<div class="text-red-500 font-bold">Error: ${error.message}</div>`;
-            }
-        }
-
-        function nextModule() {
-            if (currentModuleIndex < totalModules && quizScores[currentModuleIndex] >= passingScore) {
-                currentModuleIndex++;
-                updateProgressBar();
-                loadModuleContent(currentModuleIndex);
-                window.scrollTo(0, 0);
-            }
-        }
-
-        function previousModule() {
-            if (currentModuleIndex > 1) {
-                currentModuleIndex--;
-                updateProgressBar();
-                loadModuleContent(currentModuleIndex);
-                window.scrollTo(0, 0);
-            }
-        }
-
-        function updateProgressBar() {
-            const progress = (currentModuleIndex / totalModules) * 100;
-            progressBar.style.width = `${progress}%`;
-        }
-
-        window.onload = () => {
-            currentModuleIndex = 1;
-            updateProgressBar();
-            loadModuleContent(currentModuleIndex);
-        };
-    </script>
+    }
+</script>
 </body>
 </html>
