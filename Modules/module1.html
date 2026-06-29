@@ -13,7 +13,17 @@
     <p>Think of it as a set of nested concepts: AI is the largest, ML is inside AI, and Deep Learning (DL) is inside ML. </p>
 
     <h4>Hands-on: Environment Setup</h4>
-    <p>Before moving on, let's make sure your environment is ready. Copy and paste this code into a Jupyter Notebook to practice with NumPy and Pandas.</p>
+    <p>Before moving on, let's make sure your environment is ready. Type this code into a Jupyter Notebook to practice with NumPy and Pandas. Try typing it instead of only copying it; the goal is to connect each line with what it does.</p>
+    <div class="bg-terminal-code p-4 rounded-lg border border-neon-green shadow-lg mb-4">
+        <h4 class="font-bold mb-3 text-neon-green">What you are about to code</h4>
+        <ul class="list-disc pl-6 space-y-2">
+            <li><strong>Imports</strong> load NumPy and Pandas so you can use their tools.</li>
+            <li><strong>matrix_data</strong> starts as a regular Python list of rows.</li>
+            <li><strong>np.array(...)</strong> converts that list into a NumPy array for numerical work.</li>
+            <li><strong>data</strong> is a dictionary: each key becomes a column name.</li>
+            <li><strong>pd.DataFrame(...)</strong> turns the dictionary into a table you can inspect.</li>
+        </ul>
+    </div>
     <div class="bg-terminal-code p-4 rounded-lg border border-neon-green shadow-lg">
         <h4 class="font-bold mb-3 text-neon-green">Module 1: Setup Notebook</h4>
         <pre class="jupyter-code"><code>import numpy as np
@@ -41,6 +51,7 @@ print("\nDataFrame:")
 print(df)
 </code></pre>
     </div>
+    <p><strong>Checkpoint before the quiz:</strong> If you can explain why arrays are useful for numbers and DataFrames are useful for tables, you understand the purpose of this setup code.</p>
 
     <h4>Knowledge Check: Module 1 Quiz</h4>
     <div class="quiz-container mb-4">

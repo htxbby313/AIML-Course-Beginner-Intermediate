@@ -6,6 +6,63 @@
     <p><strong>Generative AI</strong> is a field focused on creating new, original content. Key models include <strong>Generative Adversarial Networks (GANs)</strong> and <strong>Large Language Models (LLMs)</strong>. <strong>MLOps</strong> combines ML, DevOps, and Data Engineering to streamline the entire machine learning lifecycle.</p>
     <h3>Capstone Project: Financial News Sentiment Dashboard</h3>
     <p>The <strong>Capstone Project</strong> is the final, hands-on component where you apply the knowledge and skills from all six modules to a single, comprehensive problem. You'll build an end-to-end Financial News Sentiment Dashboard, covering data acquisition, NLP, model training, and deployment.</p>
+    <div class="bg-terminal-code p-4 rounded-lg border border-neon-green shadow-lg">
+        <h4 class="font-bold mb-3 text-neon-green">How the capstone code should fit together</h4>
+        <ul class="list-disc pl-6 space-y-2">
+            <li><strong>Data acquisition:</strong> collect or load financial news headlines.</li>
+            <li><strong>NLP preprocessing:</strong> clean text, tokenize it, and prepare it for analysis.</li>
+            <li><strong>Modeling:</strong> classify each headline as positive, negative, or neutral.</li>
+            <li><strong>Evaluation:</strong> measure whether the predictions are useful.</li>
+            <li><strong>Dashboard:</strong> show the sentiment results in a way a person can understand.</li>
+        </ul>
+    </div>
+    <h3>Final Extension: Build Your Own Safe AI Agent</h3>
+    <p>After completing the core capstone, you can design your own beginner AI agent. An <strong>AI agent</strong> is a program that receives input, uses rules or a model to reason about that input, and recommends or performs a bounded action.</p>
+    <p>The goal is to build something useful and safe: a study helper, task organizer, budgeting assistant, writing coach, customer-support triage tool, or research summarizer. Your agent should help a person make better decisions without hiding what it is doing.</p>
+
+    <div class="bg-terminal-code p-4 rounded-lg border border-neon-green shadow-lg mb-4">
+        <h4 class="font-bold mb-3 text-neon-green">Safe Agent Rules</h4>
+        <ul class="list-disc pl-6 space-y-2">
+            <li><strong>Keep the scope narrow:</strong> define exactly what the agent is allowed to help with.</li>
+            <li><strong>Keep a human in control:</strong> the agent can suggest actions, but a person should approve important decisions.</li>
+            <li><strong>Protect privacy:</strong> do not collect passwords, private keys, banking logins, medical records, or unnecessary personal data.</li>
+            <li><strong>Stay legal and non-harmful:</strong> do not build agents for hacking, surveillance, fraud, harassment, weaponization, or bypassing security systems.</li>
+            <li><strong>Explain the output:</strong> the agent should show why it recommended something, not just give an answer.</li>
+        </ul>
+    </div>
+
+    <div class="bg-terminal-code p-4 rounded-lg border border-neon-green shadow-lg">
+        <h4 class="font-bold mb-3 text-neon-green">Agent Planning Template</h4>
+        <p>Fill this out before writing code. This keeps the project realistic and safe.</p>
+        <pre class="jupyter-code"><code># My Safe AI Agent Plan
+
+# 1. Agent purpose:
+# Example: Help students choose what lesson to review next.
+purpose = ""
+
+# 2. Allowed inputs:
+# Example: quiz score, topic name, time available.
+allowed_inputs = []
+
+# 3. Agent decision rules:
+# Example: if score is below 80, recommend review.
+decision_rules = []
+
+# 4. Actions the agent is allowed to suggest:
+# Example: "review module 2", "practice the code example", "take a break".
+allowed_actions = []
+
+# 5. Actions the agent is NOT allowed to take:
+# Example: "send messages automatically", "access private accounts", "change files".
+blocked_actions = []
+
+# 6. Explanation the agent should give:
+# Example: "I recommended this because your quiz score was below 80%."
+explanation_style = ""
+</code></pre>
+    </div>
+
+    <p><strong>Final checkpoint:</strong> A good beginner agent has a clear purpose, limited inputs, safe allowed actions, blocked risky actions, and plain-language explanations.</p>
     <h4>Knowledge Check: Module 6 Quiz</h4>
     <div class="quiz-container mb-4">
         <h4 class="font-semibold text-neon-green mb-3">Quiz 6: Advanced Topics</h4>

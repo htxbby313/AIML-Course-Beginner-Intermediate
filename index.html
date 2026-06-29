@@ -3,1132 +3,397 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI & Machine Learning for Everyone</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23008f8a'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='Arial' font-size='26' font-weight='700' fill='white'%3EAI%3C/text%3E%3C/svg%3E">
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+    <title>AI & Machine Learning Mastery Course</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='black'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-family='monospace' font-size='25' fill='%2300ff41'%3EAI%3C/text%3E%3C/svg%3E">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #f7f5ef;
-            --panel: #ffffff;
-            --panel-soft: #fbfaf6;
-            --text: #1f2933;
-            --muted: #687386;
-            --border: #ddd8cb;
-            --teal: #008f8a;
-            --teal-dark: #006c68;
-            --teal-soft: #e2f5f3;
-            --amber: #f4a51c;
-            --amber-soft: #fff3d8;
-            --green: #168a45;
-            --red: #b42318;
-            --code: #101828;
-            --shadow: 0 18px 45px rgba(31, 41, 51, 0.08);
-        }
-
-        * { box-sizing: border-box; }
-
         body {
-            margin: 0;
+            font-family: 'Roboto Mono', monospace;
+            background-color: #0d1117;
+            color: #00ff41;
+            padding: 2rem;
             min-height: 100vh;
-            background: var(--bg);
-            color: var(--text);
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            line-height: 1.55;
         }
-
-        button, textarea {
-            font: inherit;
-        }
-
-        button {
-            border: 0;
-            cursor: pointer;
-        }
-
-        button:disabled {
-            cursor: not-allowed;
-            opacity: 0.48;
-            box-shadow: none;
-        }
-
-        .topbar {
-            position: sticky;
+        .container { max-width: 1200px; }
+        .text-neon-green { color: #00ff41; }
+        .bg-matrix-green { background-color: #004d00; }
+        .border-neon-green { border-color: #00ff41; }
+        .bg-terminal-code { background-color: #001a00; }
+        .progress-bar {
+            position: fixed;
             top: 0;
-            z-index: 20;
-            display: grid;
-            grid-template-columns: minmax(240px, 1fr) minmax(260px, 420px) minmax(220px, 1fr);
-            align-items: center;
-            gap: 24px;
-            min-height: 76px;
-            padding: 14px 28px;
-            background: rgba(255, 255, 255, 0.9);
-            border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(16px);
+            left: 0;
+            height: 4px;
+            background-color: #00ff41;
+            box-shadow: 0 0 10px #00ff41, 0 0 5px #00ff41;
+            transition: width 0.5s ease-in-out;
+            z-index: 50;
         }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            min-width: 0;
+        .quiz-option {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            line-height: 1.5;
         }
-
-        .brand-mark {
-            display: grid;
-            place-items: center;
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            color: white;
-            background: var(--teal);
-            font-weight: 800;
-            box-shadow: 0 10px 24px rgba(0, 143, 138, 0.24);
+        .quiz-option:hover {
+            transform: scale(1.01);
+            box-shadow: 0 0 5px #00ff41;
         }
-
-        .brand h1 {
-            margin: 0;
-            font-size: 1.05rem;
-            line-height: 1.15;
+        .explanation {
+            font-size: 0.875rem;
+            color: #00e63c;
         }
-
-        .brand p {
-            margin: 3px 0 0;
-            color: var(--muted);
-            font-size: 0.88rem;
-        }
-
-        .overall-progress {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            gap: 12px;
-            color: var(--muted);
-            font-size: 0.92rem;
-        }
-
-        .progress-track {
-            height: 10px;
-            overflow: hidden;
-            border-radius: 999px;
-            background: #e9e4d8;
-        }
-
-        .progress-fill {
-            width: 0%;
-            height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, var(--teal), #27b5aa);
-            transition: width 0.25s ease;
-        }
-
-        .top-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .ghost-button,
-        .primary-button,
-        .quiet-button,
-        .choice-button {
-            min-height: 42px;
-            border-radius: 8px;
-            padding: 0 14px;
-            font-weight: 700;
-            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-        }
-
-        .primary-button {
-            color: white;
-            background: var(--teal);
-            box-shadow: 0 12px 22px rgba(0, 143, 138, 0.18);
-        }
-
-        .primary-button:hover { background: var(--teal-dark); }
-
-        .ghost-button,
-        .quiet-button {
-            color: var(--teal-dark);
-            background: #ffffff;
-            border: 1px solid var(--border);
-        }
-
-        .quiet-button {
-            min-height: 36px;
-            font-size: 0.9rem;
-        }
-
-        .app-shell {
-            display: grid;
-            grid-template-columns: 300px minmax(0, 1fr) 340px;
-            min-height: calc(100vh - 76px);
-        }
-
-        .sidebar,
-        .helper-panel {
-            padding: 24px;
-            background: rgba(255, 255, 255, 0.52);
-        }
-
-        .sidebar {
-            border-right: 1px solid var(--border);
-        }
-
-        .helper-panel {
-            border-left: 1px solid var(--border);
-        }
-
-        .sidebar h2,
-        .helper-panel h2 {
-            margin: 0 0 4px;
-            font-size: 1rem;
-        }
-
-        .sidebar p,
-        .helper-panel p {
-            margin: 0;
-            color: var(--muted);
-            font-size: 0.92rem;
-        }
-
-        .module-list {
-            display: grid;
-            gap: 8px;
-            margin-top: 20px;
-        }
-
-        .module-button {
-            display: grid;
-            grid-template-columns: 34px 1fr auto;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-            min-height: 58px;
-            padding: 10px;
-            border-radius: 8px;
-            color: var(--text);
-            background: transparent;
-            text-align: left;
-        }
-
-        .module-button:hover,
-        .module-button.active {
-            background: var(--teal-soft);
-        }
-
-        .module-number {
-            display: grid;
-            place-items: center;
-            width: 30px;
-            height: 30px;
-            border-radius: 8px;
-            color: var(--teal-dark);
-            background: #d6efed;
-            font-size: 0.86rem;
-            font-weight: 800;
-        }
-
-        .module-button.active .module-number {
-            color: #ffffff;
-            background: var(--teal);
-        }
-
-        .module-title {
-            display: block;
-            font-weight: 800;
-            line-height: 1.25;
-        }
-
-        .module-subtitle {
-            display: block;
-            margin-top: 2px;
-            color: var(--muted);
-            font-size: 0.82rem;
-        }
-
-        .completion-dot {
-            width: 14px;
-            height: 14px;
-            border: 2px solid #b7c0c7;
-            border-radius: 999px;
-        }
-
-        .module-button.complete .completion-dot {
-            border-color: var(--green);
-            background: var(--green);
-        }
-
-        .lesson {
-            max-width: 930px;
-            padding: 34px 38px 54px;
-            margin: 0 auto;
-        }
-
-        .lesson-meta {
-            display: flex;
-            justify-content: space-between;
-            gap: 18px;
-            color: var(--teal-dark);
-            font-weight: 800;
-            font-size: 0.9rem;
-        }
-
-        .lesson h2 {
-            max-width: 780px;
-            margin: 18px 0 14px;
-            font-size: clamp(2rem, 4vw, 3.4rem);
-            line-height: 1.04;
-            letter-spacing: 0;
-        }
-
-        .lesson-intro {
-            max-width: 760px;
-            margin: 0 0 26px;
-            color: #394554;
-            font-size: 1.08rem;
-        }
-
-        .section-block {
-            margin: 24px 0;
-            padding: 22px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--panel);
-            box-shadow: var(--shadow);
-        }
-
-        .idea-block {
-            border-color: #efc46c;
-            background: linear-gradient(180deg, #fffaf0, var(--amber-soft));
-        }
-
-        .section-heading {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 0 0 10px;
-            font-size: 1.16rem;
-        }
-
-        .icon-tile {
-            display: grid;
-            place-items: center;
-            flex: 0 0 auto;
-            width: 32px;
-            height: 32px;
-            border: 1px solid currentColor;
-            border-radius: 8px;
-            color: var(--teal);
-            font-weight: 900;
-            font-size: 0.78rem;
-        }
-
-        .code-lab {
-            padding: 0;
-            overflow: hidden;
-        }
-
-        .lab-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            padding: 20px 22px;
-            border-bottom: 1px solid var(--border);
-            background: var(--panel-soft);
-        }
-
-        .lab-header h3 {
-            margin: 0;
-            font-size: 1.18rem;
-        }
-
-        .lab-header p {
-            margin: 4px 0 0;
-            color: var(--muted);
-            font-size: 0.92rem;
-        }
-
-        .lab-actions {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-            gap: 8px;
-        }
-
-        .editor-wrap {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0;
-        }
-
-        .code-editor {
-            width: 100%;
-            min-height: 260px;
-            padding: 18px 20px;
-            color: #f9fafb;
-            background: var(--code);
-            border: 0;
-            border-radius: 0;
-            font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
-            font-size: 0.96rem;
-            line-height: 1.6;
-            resize: vertical;
-            outline: none;
-            tab-size: 4;
-            overflow: auto;
-            white-space: pre;
-        }
-
-        .output-panel {
-            min-height: 96px;
-            padding: 16px 20px 20px;
-            border-top: 1px solid #2f3a4b;
-            color: #d9ffe6;
-            background: #16202d;
-            font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
-            font-size: 0.92rem;
+        .correct-answer { background-color: #008000 !important; }
+        .incorrect-answer { background-color: #b30000 !important; }
+        pre {
+            border: 1px solid #00ff41;
+            padding: 1rem;
+            border-radius: 0.5rem;
             white-space: pre-wrap;
+            word-wrap: break-word;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+            font-size: 0.875rem;
+            line-height: 1.4;
         }
-
-        .lab-note {
-            padding: 14px 20px;
-            color: var(--muted);
-            background: var(--panel-soft);
-            border-top: 1px solid var(--border);
-            font-size: 0.92rem;
+        .course-title {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #00ff41;
+            text-shadow: 0 0 15px #00ff41, 0 0 7px #00ff41;
+            line-height: 1.2;
         }
-
-        .meaning-list {
-            display: grid;
-            gap: 12px;
-            margin: 0;
-            padding: 0;
-            list-style: none;
+        .module-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #00ff41;
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
         }
-
-        .meaning-list li {
-            display: grid;
-            grid-template-columns: 28px 1fr;
-            gap: 10px;
+        .module-content h3 {
+            font-size: 1.75rem;
+            font-style: italic;
+            font-weight: 700;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: #00e63c;
+            text-shadow: 0 0 5px #00e63c;
         }
-
-        .step-number {
-            display: grid;
-            place-items: center;
-            width: 28px;
-            height: 28px;
-            border-radius: 999px;
-            color: var(--teal-dark);
-            background: var(--teal-soft);
-            font-size: 0.82rem;
-            font-weight: 900;
+        .module-content h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #00e63c;
         }
-
-        .nav-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            margin-top: 24px;
+        .module-content p {
+            margin-bottom: 1.25rem;
+            line-height: 1.7;
         }
-
-        .helper-stack {
-            display: grid;
-            gap: 18px;
-            position: sticky;
-            top: 100px;
+        .jupyter-markdown, .jupyter-code {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
         }
-
-        .helper-card {
-            padding: 20px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--panel);
-            box-shadow: var(--shadow);
+        .quiz-container {
+            border: 1px solid #00ff41;
+            margin-top: 3.5rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
         }
-
-        .helper-card h3 {
-            margin: 0 0 14px;
-            font-size: 1.08rem;
+        .action-button {
+            background-color: #004d00;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+            font-weight: 700;
+            letter-spacing: 0.05em;
         }
-
-        .term {
-            margin-top: 14px;
+        .action-button:hover {
+            box-shadow: 0 0 15px #00ff41;
+            background-color: #006600;
         }
-
-        .term strong {
-            display: block;
-            color: var(--teal-dark);
-            margin-bottom: 4px;
+        .module-view { display: none; }
+        .module-view.active { display: block; }
+        .next-button-locked {
+            pointer-events: none;
+            opacity: 0.4;
+            box-shadow: none;
+            cursor: not-allowed;
         }
-
-        .check-options {
-            display: grid;
-            gap: 10px;
-            margin-top: 14px;
+        .completion-message {
+            border: 1px solid #00ff41;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 0.75rem;
+            background-color: #001a00;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
         }
-
-        .choice-button {
-            display: grid;
-            grid-template-columns: 28px 1fr;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-            min-height: 48px;
-            padding: 10px;
-            color: var(--text);
-            background: #ffffff;
-            border: 1px solid var(--border);
-            text-align: left;
+        .module-view::-webkit-scrollbar {
+            display: none;
+            width: 0 !important;
         }
-
-        .choice-letter {
-            display: grid;
-            place-items: center;
-            width: 28px;
-            height: 28px;
-            border-radius: 999px;
-            background: #eef2f6;
-            color: var(--muted);
-            font-size: 0.82rem;
-            font-weight: 900;
-        }
-
-        .choice-button.correct {
-            border-color: #79c58c;
-            background: #edf9f0;
-        }
-
-        .choice-button.correct .choice-letter {
-            color: #ffffff;
-            background: var(--green);
-        }
-
-        .choice-button.incorrect {
-            border-color: #f0a29a;
-            background: #fff1ef;
-        }
-
-        .choice-button.incorrect .choice-letter {
-            color: #ffffff;
-            background: var(--red);
-        }
-
-        .feedback {
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 8px;
-            color: var(--muted);
-            background: var(--panel-soft);
-            border: 1px solid var(--border);
-        }
-
-        .feedback.good {
-            color: #14532d;
-            background: #edf9f0;
-            border-color: #79c58c;
-        }
-
-        .feedback.bad {
-            color: #7f1d1d;
-            background: #fff1ef;
-            border-color: #f0a29a;
-        }
-
-        .status-line {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            min-height: 28px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            color: var(--teal-dark);
-            background: var(--teal-soft);
-            font-size: 0.84rem;
-            font-weight: 800;
-        }
-
-        .empty-state {
-            padding: 26px;
-            border: 1px dashed var(--border);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.7);
-            color: var(--muted);
-        }
-
-        @media (max-width: 1180px) {
-            .topbar {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .top-actions {
-                justify-content: flex-start;
-            }
-
-            .app-shell {
-                grid-template-columns: 260px minmax(0, 1fr);
-            }
-
-            .helper-panel {
-                grid-column: 1 / -1;
-                border-left: 0;
-                border-top: 1px solid var(--border);
-            }
-
-            .helper-stack {
-                position: static;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
-        }
-
-        @media (max-width: 820px) {
-            .topbar {
-                padding: 14px 16px;
-            }
-
-            .overall-progress {
-                grid-template-columns: 1fr auto;
-            }
-
-            .overall-progress span:first-child {
-                grid-column: 1 / -1;
-            }
-
-            .app-shell {
-                display: block;
-            }
-
-            .sidebar,
-            .helper-panel {
-                padding: 18px 16px;
-                border: 0;
-            }
-
-            .module-list {
-                grid-template-columns: 1fr;
-            }
-
-            .lesson {
-                padding: 24px 16px 38px;
-            }
-
-            .lesson-meta,
-            .nav-row,
-            .lab-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .lab-actions {
-                justify-content: stretch;
-            }
-
-            .lab-actions button {
-                flex: 1 1 130px;
-            }
-
-            .helper-stack {
-                grid-template-columns: 1fr;
-            }
+        .module-view {
+            scrollbar-width: none;
         }
     </style>
 </head>
 <body>
-    <header class="topbar">
-        <div class="brand">
-            <div class="brand-mark">AI</div>
-            <div>
-                <h1>AI & Machine Learning for Everyone</h1>
-                <p>No coding experience needed</p>
-            </div>
+    <div class="container mx-auto p-8 bg-matrix-green rounded-lg shadow-md border border-neon-green">
+        <div class="progress-bar" id="progressBar"></div>
+
+        <header class="course-title">
+            AI & Machine Learning Mastery Course
+        </header>
+
+        <div id="course-content-container" class="space-y-16">
+            <!-- Content will be loaded here dynamically -->
         </div>
 
-        <div class="overall-progress" aria-label="Overall course progress">
-            <span>Overall progress</span>
-            <div class="progress-track"><div class="progress-fill" id="overallProgress"></div></div>
-            <strong id="overallPercent">0%</strong>
+        <div class="flex justify-between mt-10" id="navigation-buttons-container">
+            <button id="previousModuleBtn" onclick="previousModule()" class="action-button" style="display: none;">Previous Module</button>
+            <button id="nextModuleBtn" onclick="nextModule()" class="action-button next-button-locked">Next Module</button>
         </div>
-
-        <div class="top-actions">
-            <button class="ghost-button" id="resetProgressBtn" type="button">Reset progress</button>
-            <button class="primary-button" id="runTopBtn" type="button">Run code</button>
-        </div>
-    </header>
-
-    <main class="app-shell">
-        <aside class="sidebar">
-            <h2>Course modules</h2>
-            <p>Read, run code, then answer one check.</p>
-            <nav class="module-list" id="moduleList" aria-label="Course modules"></nav>
-        </aside>
-
-        <section class="lesson" id="lessonContent" aria-live="polite"></section>
-
-        <aside class="helper-panel">
-            <div class="helper-stack">
-                <section class="helper-card">
-                    <h3>Your progress</h3>
-                    <p id="moduleProgressText">0 of 6 modules complete</p>
-                    <div class="progress-track" style="margin-top: 12px;"><div class="progress-fill" id="moduleProgress"></div></div>
-                </section>
-
-                <section class="helper-card" id="glossaryCard"></section>
-
-                <section class="helper-card" id="checkCard"></section>
-            </div>
-        </aside>
-    </main>
+    </div>
 
     <script>
-        const modules = [
-            {
-                title: "Welcome to AI",
-                subtitle: "What AI means",
-                lesson: "AI is software that can make a useful guess, suggestion, or decision from examples. You already see it when apps recommend a route, sort messages, or predict what word you might type next.",
-                idea: "You do not need to start by memorizing math or syntax. Start with the job: what should the computer look at, and what should it decide?",
-                labTitle: "Make your first prediction",
-                labIntro: "This tiny program uses a simple rule: if the score is high enough, print a friendly result.",
-                starterCode: `score = 82\n\nif score >= 70:\n    print(\"Ready for the next lesson\")\nelse:\n    print(\"Review one more time\")\n\nprint(\"Score checked:\", score)`,
-                steps: [
-                    "Change the number in score and run the code again.",
-                    "The if line asks a yes-or-no question.",
-                    "The indented lines run only when that branch is chosen."
-                ],
-                terms: [
-                    ["AI", "Software that makes useful guesses or decisions."],
-                    ["Prediction", "An answer the computer estimates from information."],
-                    ["Rule", "A simple instruction the computer follows exactly."]
-                ],
-                check: {
-                    question: "What is this program doing?",
-                    options: [
-                        "Checking a score and printing a matching message.",
-                        "Installing Python on the computer.",
-                        "Drawing a chart automatically.",
-                        "Training a large AI system."
-                    ],
-                    answer: 0,
-                    explanation: "The code compares the score with 70, then prints one of two messages."
-                }
-            },
-            {
-                title: "Data is Everywhere",
-                subtitle: "Examples become evidence",
-                lesson: "Data is information the computer can use. It might be numbers, words, dates, labels, clicks, ratings, or measurements. Machine learning starts by collecting examples that are clear enough to learn from.",
-                idea: "Think of data as a set of receipts. One receipt is not enough to understand a whole business, but many receipts can reveal patterns.",
-                labTitle: "Calculate an average",
-                labIntro: "Averages help us summarize a group of numbers with one useful number.",
-                starterCode: `study_minutes = [10, 20, 15, 30, 25]\n\ntotal = sum(study_minutes)\ncount = len(study_minutes)\naverage = total / count\n\nprint(\"Total minutes:\", total)\nprint(\"Number of days:\", count)\nprint(\"Average per day:\", average)`,
-                steps: [
-                    "The square brackets create a list.",
-                    "sum adds the numbers together.",
-                    "len counts how many numbers are in the list."
-                ],
-                terms: [
-                    ["Data", "Facts or examples a computer can process."],
-                    ["List", "A collection of values stored together."],
-                    ["Average", "The total divided by how many items there are."]
-                ],
-                check: {
-                    question: "Why is an average useful?",
-                    options: [
-                        "It summarizes several numbers with one easier number.",
-                        "It deletes all the original data.",
-                        "It proves every value is the same.",
-                        "It turns words into images."
-                    ],
-                    answer: 0,
-                    explanation: "An average gives a quick summary without reading every number one by one."
-                }
-            },
-            {
-                title: "Patterns and Predictions",
-                subtitle: "Finding signals",
-                lesson: "A pattern is something that tends to repeat. A prediction uses that pattern to estimate what might happen next. The goal is not magic. The goal is a useful estimate.",
-                idea: "If most completed lessons lead to higher quiz scores, completed lessons can become a signal for predicting readiness.",
-                labTitle: "Use data to make a simple prediction",
-                labIntro: "This program predicts readiness from minutes practiced. It is simple on purpose.",
-                starterCode: `minutes_practiced = 45\n\nif minutes_practiced >= 40:\n    prediction = \"likely ready\"\nelif minutes_practiced >= 20:\n    prediction = \"getting close\"\nelse:\n    prediction = \"needs more practice\"\n\nprint(\"Prediction:\", prediction)`,
-                steps: [
-                    "Change minutes_practiced and run the code.",
-                    "elif means otherwise, ask another question.",
-                    "The prediction is stored in a variable, then printed."
-                ],
-                terms: [
-                    ["Pattern", "Something that appears repeatedly in data."],
-                    ["Signal", "A clue that helps make a prediction."],
-                    ["Variable", "A name that stores a value in code."]
-                ],
-                check: {
-                    question: "What happens when minutes_practiced is 25?",
-                    options: [
-                        "The prediction becomes getting close.",
-                        "The code stops working.",
-                        "The prediction becomes likely ready.",
-                        "The list gets sorted."
-                    ],
-                    answer: 0,
-                    explanation: "25 is at least 20, but not at least 40, so the middle branch runs."
-                }
-            },
-            {
-                title: "Machine Learning Basics",
-                subtitle: "Learning from labeled examples",
-                lesson: "In machine learning, the computer learns a pattern from examples instead of only following hand-written rules. A labeled example includes both the input and the right answer.",
-                idea: "If you give a system many messages labeled important or not important, it can learn clues that separate the two groups.",
-                labTitle: "Classify text with beginner rules",
-                labIntro: "Real text models are more advanced, but this shows the basic classification idea.",
-                starterCode: `message = \"project deadline tomorrow\"\nimportant_words = [\"deadline\", \"urgent\", \"today\", \"tomorrow\"]\n\nis_important = False\nfor word in important_words:\n    if word in message:\n        is_important = True\n\nif is_important:\n    print(\"Label: important\")\nelse:\n    print(\"Label: not important\")`,
-                steps: [
-                    "Try changing the message text.",
-                    "The for loop checks each important word.",
-                    "The label is the answer the program assigns."
-                ],
-                terms: [
-                    ["Label", "The answer attached to an example."],
-                    ["Classifier", "A system that sorts examples into categories."],
-                    ["Loop", "Code that repeats for each item in a collection."]
-                ],
-                check: {
-                    question: "What is a label?",
-                    options: [
-                        "The answer attached to an example.",
-                        "A color used in the design.",
-                        "A type of computer screen.",
-                        "A package installer."
-                    ],
-                    answer: 0,
-                    explanation: "Labels are the answers a model can learn from, such as important or not important."
-                }
-            },
-            {
-                title: "Training a Model",
-                subtitle: "Improving with feedback",
-                lesson: "Training means adjusting a model so its answers get closer to the examples. Beginners can understand training as repeated practice with feedback.",
-                idea: "A model starts with a rough guess. Each mistake gives a clue about how to improve the next guess.",
-                labTitle: "Measure mistakes",
-                labIntro: "This program compares predictions with correct answers and counts how often they match.",
-                starterCode: `correct_answers = [\"yes\", \"no\", \"yes\", \"yes\"]\npredictions = [\"yes\", \"yes\", \"yes\", \"no\"]\n\nmatches = 0\nfor index in range(len(correct_answers)):\n    if predictions[index] == correct_answers[index]:\n        matches = matches + 1\n\naccuracy = matches / len(correct_answers)\nprint(\"Correct predictions:\", matches)\nprint(\"Accuracy:\", accuracy)`,
-                steps: [
-                    "Each prediction is compared with the correct answer in the same position.",
-                    "matches increases when the prediction is right.",
-                    "Accuracy is correct predictions divided by all predictions."
-                ],
-                terms: [
-                    ["Training", "Improving a model by learning from examples."],
-                    ["Accuracy", "The share of predictions that were correct."],
-                    ["Feedback", "Information that tells the system how it did."]
-                ],
-                check: {
-                    question: "What does accuracy measure here?",
-                    options: [
-                        "How many predictions were correct out of all predictions.",
-                        "How fast the page loads.",
-                        "How many lines of code were written.",
-                        "How large the data file is."
-                    ],
-                    answer: 0,
-                    explanation: "Accuracy is the fraction of predictions that matched the correct answers."
-                }
-            },
-            {
-                title: "Build a Mini AI Tool",
-                subtitle: "Put the pieces together",
-                lesson: "A useful beginner project has four parts: collect information, apply a simple pattern, show a result, and explain what the result means. That is enough to build confidence before advanced tools.",
-                idea: "Your first AI tool does not need to be huge. A small assistant that scores a habit, message, or plan can teach the full workflow.",
-                labTitle: "Create a tiny study coach",
-                labIntro: "Edit the numbers and message to make this mini tool your own.",
-                starterCode: `minutes_today = 35\nquiz_score = 78\nnotes = \"I understood variables and if statements\"\n\nif minutes_today >= 30 and quiz_score >= 70:\n    advice = \"Move forward to the next lesson.\"\nelif minutes_today >= 15:\n    advice = \"Review one concept, then try again.\"\nelse:\n    advice = \"Start with a short practice session.\"\n\nprint(\"Study coach result\")\nprint(\"Minutes:\", minutes_today)\nprint(\"Quiz score:\", quiz_score)\nprint(\"Notes:\", notes)\nprint(\"Advice:\", advice)`,
-                steps: [
-                    "The tool combines two numbers and one note.",
-                    "and means both conditions must be true.",
-                    "The output explains the result in plain language."
-                ],
-                terms: [
-                    ["Workflow", "The steps a tool follows from input to output."],
-                    ["Condition", "A yes-or-no test in code."],
-                    ["Output", "What the program shows after it runs."]
-                ],
-                check: {
-                    question: "What makes this a complete beginner project?",
-                    options: [
-                        "It takes inputs, applies logic, and explains an output.",
-                        "It requires a paid cloud server.",
-                        "It hides all results from the learner.",
-                        "It only works after installing many tools."
-                    ],
-                    answer: 0,
-                    explanation: "A small project is valuable when the learner can edit inputs, run logic, and understand the output."
-                }
-            }
-        ];
+        let currentModuleIndex = 0;
+        const totalModules = 6;
+        const quizScores = {};
+        const passingScore = 0.8;
 
-        const storageKey = "aiml-course-progress-v2";
-        let currentModule = 0;
-        let pyodideReady = null;
-        let progress = loadProgress();
+        const allQuizzes = {
+            1: [
+                { question: "Which of the following is the broadest concept?", options: ["Deep Learning", "Artificial Intelligence (AI)", "Machine Learning (ML)", "Robotics"], correct: 1, explanation: "Artificial Intelligence is the overarching field, with Machine Learning as a subset and Deep Learning as a subset of ML." },
+                { question: "What is the primary goal of Supervised Learning?", options: ["To find hidden patterns in unlabeled data", "To learn from labeled data to make predictions on new data", "To learn by interacting with an environment through rewards and penalties", "To create new features from existing data"], correct: 1, explanation: "Supervised learning models are trained on labeled datasets, where each data point is tagged with a correct output." },
+                { question: "An algorithm that groups customers into segments based on their purchasing habits without any prior labels is an example of:", options: ["Supervised Learning", "Reinforcement Learning", "Unsupervised Learning", "Deep Learning"], correct: 2, explanation: "Unsupervised learning is used to find hidden patterns or structures within unlabeled data." },
+                { question: "What is the primary purpose of the NumPy library in an AI/ML environment?", options: ["To create interactive visualizations", "To manage software packages and environments", "To perform efficient numerical computations with multi-dimensional arrays", "To build and train deep neural networks"], correct: 2, explanation: "NumPy is a fundamental package for numerical computation in Python and provides support for large, multi-dimensional arrays and matrices." },
+                { question: "Which term is best described as 'training a machine to play a game by rewarding it for winning and penalizing it for losing'?", options: ["Supervised Learning", "Unsupervised Learning", "Reinforcement Learning", "Transfer Learning"], correct: 2, explanation: "Reinforcement learning models learn by interacting with an environment and receiving rewards or penalties." }
+            ],
+            2: [
+                { question: "From Module 1: What is the relationship between AI, ML, and DL?", options: ["AI and ML are the same, with DL being a subset.", "ML is a subset of AI, and DL is a subset of ML.", "DL is a subset of AI, and ML is a subset of DL.", "They are three unrelated fields."], correct: 1, explanation: "AI is the broadest concept, followed by ML, and then DL as a more specialized subset of ML." },
+                { question: "What is the primary purpose of data preprocessing in machine learning?", options: ["To make the data look visually appealing in charts", "To prepare and transform raw data into a suitable format for ML algorithms", "To reduce the amount of data to save storage space", "To encrypt sensitive information in the dataset"], correct: 1, explanation: "Data preprocessing transforms raw data into a clean, structured format that ML algorithms can effectively use, improving model performance and reliability." },
+                { question: "Which metric is most appropriate for evaluating a regression model?", options: ["Accuracy", "Precision", "Mean Squared Error (MSE)", "F1 Score"], correct: 2, explanation: "Mean Squared Error (MSE) measures the average squared difference between predicted and actual values, making it suitable for regression tasks where we predict continuous values." },
+                { question: "What does the term 'feature engineering' refer to?", options: ["The process of selecting which machine learning algorithm to use", "Creating new features from existing data to improve model performance", "Engineering a system to automatically collect more data", "The process of tuning model hyperparameters"], correct: 1, explanation: "Feature engineering involves creating new features from existing data to help the model better understand patterns, which can significantly improve model performance." },
+                { question: "What is the difference between overfitting and underfitting?", options: ["Overfitting is when the model is too simple, underfitting is when it is too complex.", "Overfitting occurs on test data, while underfitting occurs on training data.", "Overfitting is when the model learns noise in the data, underfitting is when it fails to capture the underlying pattern.", "There is no difference; they are different terms for the same concept."], correct: 2, explanation: "Overfitting results in a model that performs well on training data but poorly on unseen data. Underfitting is when the model is too simple and performs poorly on both." }
+            ],
+            3: [
+                { question: "From Module 2: A confusion matrix is used to evaluate the performance of which type of model?", options: ["Regression", "Clustering", "Classification", "Anomaly Detection"], correct: 2, explanation: "A confusion matrix shows the number of true positives, false positives, true negatives, and false negatives for a classification model." },
+                { question: "What is the primary purpose of a neural network's activation function?", options: ["To add non-linearity to the network's output", "To speed up the training process", "To increase the number of layers", "To handle missing data"], correct: 0, explanation: "Activation functions introduce non-linearity, allowing the network to learn more complex, non-linear patterns in the data." },
+                { question: "Which algorithm is used in deep learning to efficiently update a neural network's weights during training?", options: ["K-Means", "Logistic Regression", "Backpropagation", "Decision Trees"], correct: 2, explanation: "Backpropagation is the key algorithm that calculates and propagates the error gradients backward through the network to update the weights." },
+                { question: "In a CNN, what is the main purpose of a 'convolutional layer'?", options: ["To reduce the spatial dimensions of the feature maps", "To flatten the input data into a single vector", "To extract features like edges and textures from the input image", "To apply a non-linear activation function to the data"], correct: 2, explanation: "Convolutional layers apply filters to the image to automatically learn and extract hierarchical features." },
+                { question: "What is a major benefit of using transfer learning?", options: ["It requires a larger dataset to achieve good performance.", "It makes the model less complex and easier to interpret.", "It significantly reduces training time and can lead to better performance with limited data.", "It is only used for unsupervised learning tasks."], correct: 2, explanation: "Transfer learning leverages a pre-trained model on a large dataset, allowing you to fine-tune it for a related task with much less data and computational resources." }
+            ],
+            4: [
+                { question: "From Module 3: What is the main purpose of a 'hidden layer' in a neural network?", options: ["To receive the raw input data", "To perform complex computations and transformations on the data", "To produce the final prediction", "To manage the network's overall structure"], correct: 1, explanation: "Hidden layers are where the primary computations happen, allowing the network to learn intricate patterns from the data." },
+                { question: "What is the main difference between stemming and lemmatization?", options: ["Stemming is a more accurate process that considers context.", "Lemmatization is faster but less accurate.", "Stemming is a crude process that often chops off the end of words, while lemmatization reduces words to their meaningful base form.", "They are two different names for the exact same process."], correct: 2, explanation: "Lemmatization is a more sophisticated process that uses a dictionary to find the root form, whereas stemming is a heuristic that may result in non-words." },
+                { question: "What is a 'word embedding'?", options: ["A method to count word frequencies", "A binary representation of a word", "A numerical vector that captures a word's meaning and relationships", "A list of stop words"], correct: 2, explanation: "Word embeddings allow machine learning models to understand the semantic relationships between words by representing them as dense vectors in a high-dimensional space." },
+                { question: "Which NLP task involves assigning a sentiment (e.g., positive, negative, neutral) to a piece of text?", options: ["Text Classification", "Machine Translation", "Sentiment Analysis", "Named Entity Recognition"], correct: 2, explanation: "Sentiment analysis is a specific type of text classification where the goal is to determine the emotional tone of the text." },
+                { question: "What is a key feature of the Transformer architecture?", options: ["It uses a single, massive recurrent layer.", "It relies on a self-attention mechanism to weigh the importance of different words.", "It is designed only for text generation tasks.", "It is the predecessor to simple RNNs."], correct: 1, explanation: "The self-attention mechanism is what makes the Transformer so effective at understanding context and relationships in long sequences of text." }
+            ],
+            5: [
+                { question: "From Module 4: What is the purpose of lemmatization?", options: ["To convert text into images for computer vision models.", "To reduce a word to its crude root form by chopping off its end.", "To remove common words like 'the' and 'a' from text.", "To reduce a word to its meaningful base form considering its context."], correct: 3, explanation: "Lemmatization is a sophisticated text preprocessing step that reduces words to their meaningful base or dictionary form, unlike stemming which is a crude process." },
+                { question: "What is the main function of an image's 'channels' in the RGB model?", options: ["To represent the image's resolution.", "To determine the image's brightness.", "To represent the intensity of red, green, and blue colors.", "To compress the image file size."], correct: 2, explanation: "In the RGB model, each channel corresponds to one of the primary colors (Red, Green, or Blue) and stores its intensity value for each pixel." },
+                { question: "Which image preprocessing technique helps prevent a model from overfitting to the training data?", options: ["Resizing", "Grayscale conversion", "Augmentation", "Normalization"], correct: 2, explanation: "Image augmentation creates new training examples by applying random transformations (like rotation or flipping) to existing images, increasing data diversity and helping the model generalize better." },
+                { question: "What is the key difference between Object Detection and Image Segmentation?", options: ["Object detection identifies and locates objects with a bounding box, while segmentation classifies each pixel.", "Object detection is only for video, while segmentation is for static images.", "Segmentation is an older technique than object detection.", "They are the same process, just with a different name."], correct: 0, explanation: "Object detection aims to find objects in an image and draw a bounding box around them. Image segmentation is more granular; it classifies every single pixel in an image to determine what object it belongs to, providing more precise outlines." },
+                { question: "What is a major benefit of using a pre-trained model for computer vision?", options: ["It requires a larger training dataset.", "It is always more accurate than a custom-trained model.", "It allows you to get good performance with less data and computational power.", "It can only be used for image classification tasks."], correct: 2, explanation: "Pre-trained models have learned a wealth of features from large public datasets. This saves you time and resources, as you only need to fine-tune the model for your specific task." }
+            ],
+            6: [
+                { question: "From Module 5: What is the primary purpose of image normalization?", options: ["To convert an image from RGB to grayscale.", "To reduce the image file size.", "To resize the image to a standard dimension.", "To scale pixel values to a fixed range (e.g., 0 to 1)"], correct: 3, explanation: "Normalization scales pixel values to a standard range, which helps to stabilize and accelerate the training of neural networks." },
+                { question: "What are the three main components of a Reinforcement Learning problem?", options: ["Input, Hidden Layer, Output", "Data, Model, Prediction", "Agent, Environment, Reward", "Text, Image, Audio"], correct: 2, explanation: "An RL agent learns by interacting with an environment, and receives rewards for desired behaviors, which guides its learning process." },
+                { question: "Which of the following is an example of Generative AI?", options: ["A model that predicts house prices based on features.", "A system that classifies emails as spam or not spam.", "A model that generates new, realistic images of human faces.", "A system that clusters customer data into segments."], correct: 2, explanation: "Generative AI is a type of AI that generates new content, such as text, images, or audio, rather than analyzing or classifying existing data." },
+                { question: "Which project follows the Safe Agent Rules?", options: ["A study helper that recommends review topics and explains why.", "An agent that tries to bypass website security.", "An agent that collects private passwords for convenience.", "An agent that sends messages from someone else's account without approval."], correct: 0, explanation: "A safe beginner agent has a narrow helpful purpose, protects privacy, avoids harmful actions, and keeps a human in control." },
+                { question: "What should you define before coding your own AI agent?", options: ["Purpose, allowed inputs, allowed actions, blocked actions, and explanation style.", "Only the name of the project.", "A way to avoid all human approval.", "A list of private accounts to access."], correct: 0, explanation: "Planning the agent's scope, inputs, actions, blocked actions, and explanations keeps the project realistic, useful, and safe." }
+            ]
+        };
 
-        const moduleList = document.getElementById("moduleList");
-        const lessonContent = document.getElementById("lessonContent");
-        const glossaryCard = document.getElementById("glossaryCard");
-        const checkCard = document.getElementById("checkCard");
-        const overallProgress = document.getElementById("overallProgress");
-        const overallPercent = document.getElementById("overallPercent");
-        const moduleProgress = document.getElementById("moduleProgress");
-        const moduleProgressText = document.getElementById("moduleProgressText");
+        const quizContainers = {};
 
-        function loadProgress() {
-            try {
-                return JSON.parse(localStorage.getItem(storageKey)) || { completed: [] };
-            } catch {
-                return { completed: [] };
-            }
-        }
-
-        function saveProgress() {
-            localStorage.setItem(storageKey, JSON.stringify(progress));
-        }
-
-        function completedCount() {
-            return progress.completed.filter(Boolean).length;
-        }
-
-        function renderModules() {
-            moduleList.innerHTML = modules.map((module, index) => `
-                <button class="module-button ${index === currentModule ? "active" : ""} ${progress.completed[index] ? "complete" : ""}" type="button" data-module="${index}">
-                    <span class="module-number">${index + 1}</span>
-                    <span>
-                        <span class="module-title">${module.title}</span>
-                        <span class="module-subtitle">${module.subtitle}</span>
-                    </span>
-                    <span class="completion-dot" aria-label="${progress.completed[index] ? "Complete" : "Incomplete"}"></span>
-                </button>
-            `).join("");
-        }
-
-        function renderLesson() {
-            const module = modules[currentModule];
-            lessonContent.innerHTML = `
-                <div class="lesson-meta">
-                    <span>Module ${currentModule + 1} of ${modules.length}</span>
-                    <span class="status-line" id="pythonStatus">Python loads when you run code</span>
-                </div>
-                <h2>${module.title}</h2>
-                <p class="lesson-intro">${module.lesson}</p>
-
-                <section class="section-block idea-block">
-                    <h3 class="section-heading"><span class="icon-tile">?</span>No-code idea</h3>
-                    <p>${module.idea}</p>
-                </section>
-
-                <section class="section-block code-lab">
-                    <div class="lab-header">
-                        <div>
-                            <h3>${module.labTitle}</h3>
-                            <p>${module.labIntro}</p>
-                        </div>
-                        <div class="lab-actions">
-                            <button class="quiet-button" type="button" id="copyCodeBtn">Copy code</button>
-                            <button class="ghost-button" type="button" id="resetCodeBtn">Reset</button>
-                            <button class="primary-button" type="button" id="runCodeBtn">Run code</button>
-                        </div>
-                    </div>
-                    <div class="editor-wrap">
-                        <textarea class="code-editor" id="codeEditor" spellcheck="false" wrap="off" aria-label="Python code editor">${module.starterCode}</textarea>
-                        <pre class="output-panel" id="outputPanel">Output will appear here after you press Run code.</pre>
-                    </div>
-                    <div class="lab-note">Safe browser lab: Python runs in this page with Pyodide. Nothing is sent to a server.</div>
-                </section>
-
-                <section class="section-block">
-                    <h3 class="section-heading"><span class="icon-tile">i</span>What this means</h3>
-                    <ul class="meaning-list">
-                        ${module.steps.map((step, index) => `<li><span class="step-number">${index + 1}</span><span>${step}</span></li>`).join("")}
-                    </ul>
-                </section>
-
-                <div class="nav-row">
-                    <button class="ghost-button" type="button" id="previousBtn"${currentModule === 0 ? " disabled" : ""}>Previous module</button>
-                    <button class="primary-button" type="button" id="nextBtn">${currentModule === modules.length - 1 ? "Finish course" : "Next module"}</button>
-                </div>
-            `;
-
-            document.getElementById("copyCodeBtn").addEventListener("click", copyCode);
-            document.getElementById("resetCodeBtn").addEventListener("click", resetCode);
-            document.getElementById("runCodeBtn").addEventListener("click", runCode);
-            document.getElementById("previousBtn").addEventListener("click", previousModule);
-            document.getElementById("nextBtn").addEventListener("click", nextModule);
-        }
-
-        function renderGlossary() {
-            const module = modules[currentModule];
-            glossaryCard.innerHTML = `
-                <h3>Glossary</h3>
-                <p>Plain-English terms for this module.</p>
-                ${module.terms.map(([term, definition]) => `
-                    <div class="term">
-                        <strong>${term}</strong>
-                        <span>${definition}</span>
-                    </div>
-                `).join("")}
-            `;
-        }
-
-        function renderCheck() {
-            const module = modules[currentModule];
-            const answered = progress.completed[currentModule];
-            checkCard.innerHTML = `
-                <h3>Knowledge check</h3>
-                <p>${module.check.question}</p>
-                <div class="check-options">
-                    ${module.check.options.map((option, index) => `
-                        <button class="choice-button" type="button" data-choice="${index}">
-                            <span class="choice-letter">${String.fromCharCode(65 + index)}</span>
-                            <span>${option}</span>
-                        </button>
-                    `).join("")}
-                </div>
-                <div class="feedback ${answered ? "good" : ""}" id="checkFeedback">
-                    ${answered ? "Complete. " + module.check.explanation : "Choose an answer to mark this module complete."}
-                </div>
-            `;
-
-            checkCard.querySelectorAll("[data-choice]").forEach((button) => {
-                button.addEventListener("click", () => answerCheck(Number(button.dataset.choice)));
+        function loadQuiz(moduleIndex) {
+            const quizContainerId = `quiz${moduleIndex}-questions`;
+            let quizHTML = '';
+            allQuizzes[moduleIndex].forEach((q, qIndex) => {
+                quizHTML += `<div class="mb-4">
+                    <p class="font-bold mb-2 text-white">Q${qIndex + 1}: ${q.question}</p>
+                    <ul class="space-y-2">`;
+                q.options.forEach((option, oIndex) => {
+                    quizHTML += `<li class="quiz-option bg-gray-800 p-3 rounded-md" data-question="${qIndex}" data-option="${oIndex}">${option}</li>`;
+                });
+                quizHTML += `</ul>
+                </div>`;
             });
+            document.getElementById(quizContainerId).innerHTML = quizHTML;
+            quizContainers[moduleIndex] = document.getElementById(quizContainerId);
+            quizContainers[moduleIndex].addEventListener('click', handleOptionClick);
         }
 
-        function renderProgress() {
-            const count = completedCount();
-            const percent = Math.round((count / modules.length) * 100);
-            overallProgress.style.width = `${percent}%`;
-            moduleProgress.style.width = `${percent}%`;
-            overallPercent.textContent = `${percent}%`;
-            moduleProgressText.textContent = `${count} of ${modules.length} modules complete`;
+        function handleOptionClick(event) {
+            const target = event.target.closest('.quiz-option');
+            if (!target) return;
+            const questionIndex = parseInt(target.dataset.question);
+            const container = target.closest('.quiz-container');
+            const options = container.querySelectorAll(`[data-question="${questionIndex}"]`);
+            options.forEach(opt => opt.classList.remove('bg-matrix-green'));
+            target.classList.add('bg-matrix-green');
         }
 
-        function renderApp() {
-            renderModules();
-            renderLesson();
-            renderGlossary();
-            renderCheck();
-            renderProgress();
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        }
+        function runQuiz(moduleIndex) {
+            const questions = allQuizzes[moduleIndex];
+            let correctAnswers = 0;
+            const resultsDiv = document.getElementById(`quiz${moduleIndex}-results`);
+            resultsDiv.innerHTML = '';
 
-        async function ensurePyodide() {
-            if (!pyodideReady) {
-                setPythonStatus("Loading Python...");
-                pyodideReady = loadPyodide();
-            }
-            const pyodide = await pyodideReady;
-            setPythonStatus("Python ready");
-            return pyodide;
-        }
+            questions.forEach((q, qIndex) => {
+                const selectedOption = quizContainers[moduleIndex].querySelector(`.quiz-option[data-question="${qIndex}"].bg-matrix-green`);
+                const isCorrect = selectedOption && parseInt(selectedOption.dataset.option) === q.correct;
+                const resultText = document.createElement('p');
 
-        function setPythonStatus(message) {
-            const status = document.getElementById("pythonStatus");
-            if (status) status.textContent = message;
-        }
-
-        async function runCode() {
-            const editor = document.getElementById("codeEditor");
-            const output = document.getElementById("outputPanel");
-            output.textContent = "Running...";
-
-            try {
-                const pyodide = await ensurePyodide();
-                let stdout = "";
-                let stderr = "";
-
-                pyodide.setStdout({ batched: (text) => { stdout += text + "\n"; } });
-                pyodide.setStderr({ batched: (text) => { stderr += text + "\n"; } });
-
-                const result = await pyodide.runPythonAsync(editor.value);
-                const resultText = result === undefined ? "" : String(result);
-                output.textContent = [stdout.trimEnd(), stderr.trimEnd(), resultText].filter(Boolean).join("\n") || "Code ran with no printed output.";
-            } catch (error) {
-                output.textContent = `Error:\n${error.message}\n\nTry reading the line number and checking spelling, quotes, and indentation.`;
-                setPythonStatus("Python ready");
-            }
-        }
-
-        async function copyCode() {
-            const editor = document.getElementById("codeEditor");
-            await navigator.clipboard.writeText(editor.value);
-            const output = document.getElementById("outputPanel");
-            output.textContent = "Code copied. You can paste it into another editor later.";
-        }
-
-        function resetCode() {
-            const editor = document.getElementById("codeEditor");
-            editor.value = modules[currentModule].starterCode;
-            document.getElementById("outputPanel").textContent = "Starter code restored. Press Run code when ready.";
-        }
-
-        function answerCheck(choice) {
-            const module = modules[currentModule];
-            const buttons = checkCard.querySelectorAll("[data-choice]");
-            const feedback = document.getElementById("checkFeedback");
-
-            buttons.forEach((button) => {
-                button.classList.remove("correct", "incorrect");
-                const value = Number(button.dataset.choice);
-                if (value === module.check.answer) button.classList.add("correct");
-                if (value === choice && value !== module.check.answer) button.classList.add("incorrect");
+                if (isCorrect) {
+                    correctAnswers++;
+                    resultText.innerHTML = `✅ <strong>Question ${qIndex + 1}: Correct!</strong> ${q.explanation}`;
+                    selectedOption.classList.add('correct-answer');
+                    selectedOption.classList.remove('bg-matrix-green');
+                } else {
+                    resultText.innerHTML = `❌ <strong>Question ${qIndex + 1}: Incorrect.</strong> Correct answer was: "${q.options[q.correct]}". ${q.explanation}`;
+                    if (selectedOption) {
+                        selectedOption.classList.add('incorrect-answer');
+                        selectedOption.classList.remove('bg-matrix-green');
+                    }
+                    const correctOption = quizContainers[moduleIndex].querySelector(`.quiz-option[data-question="${qIndex}"][data-option="${q.correct}"]`);
+                    if (correctOption) {
+                         correctOption.classList.add('correct-answer');
+                    }
+                }
+                resultsDiv.appendChild(resultText);
             });
 
-            if (choice === module.check.answer) {
-                progress.completed[currentModule] = true;
-                saveProgress();
-                feedback.className = "feedback good";
-                feedback.textContent = `Correct. ${module.check.explanation}`;
-                renderModules();
-                renderProgress();
+            const score = correctAnswers / questions.length;
+            quizScores[moduleIndex] = score;
+
+            const finalResult = document.createElement('h4');
+            const nextModuleBtn = document.getElementById('nextModuleBtn');
+            const previousModuleBtn = document.getElementById('previousModuleBtn');
+
+            if (score >= passingScore) {
+                const nextActionText = moduleIndex === totalModules ? 'finish the course' : 'proceed to the next module';
+                finalResult.innerHTML = `<strong>Quiz Passed!</strong> You scored ${Math.round(score * 100)}%. You can now ${nextActionText}.`;
+                finalResult.className = "text-xl font-bold text-green-400 mt-4";
+                if (nextModuleBtn) nextModuleBtn.classList.remove('next-button-locked');
+
             } else {
-                feedback.className = "feedback bad";
-                feedback.textContent = "Not quite. Try again, then reread the explanation above.";
+                finalResult.innerHTML = `<strong>Quiz Failed.</strong> You scored ${Math.round(score * 100)}%. Please review the material and try again.`;
+                finalResult.className = "text-xl font-bold text-red-400 mt-4";
+                if (nextModuleBtn) nextModuleBtn.classList.add('next-button-locked');
             }
+            resultsDiv.prepend(finalResult);
+            resultsDiv.classList.remove('hidden');
         }
 
-        function previousModule() {
-            if (currentModule > 0) {
-                currentModule -= 1;
-                renderApp();
+        async function loadModuleContent(moduleIndex) {
+            const container = document.getElementById('course-content-container');
+            const moduleFileName = `module${moduleIndex}.html`;
+            const moduleUrl = `./Modules/${moduleFileName}`;
+
+            try {
+                const response = await fetch(moduleUrl);
+                if (!response.ok) {
+                    throw new Error(`Failed to load module ${moduleIndex}: ${response.statusText}`);
+                }
+                const htmlContent = await response.text();
+                container.innerHTML = htmlContent;
+
+                if (allQuizzes[moduleIndex]) {
+                    loadQuiz(moduleIndex);
+                }
+
+                const nextModuleBtn = document.getElementById('nextModuleBtn');
+                const previousModuleBtn = document.getElementById('previousModuleBtn');
+
+                nextModuleBtn.style.display = 'block';
+
+                if (moduleIndex === 1) {
+                    previousModuleBtn.style.display = 'none';
+                } else {
+                    previousModuleBtn.style.display = 'block';
+                }
+
+                if (moduleIndex === totalModules) {
+                    nextModuleBtn.innerHTML = 'Finish Course';
+                } else {
+                    nextModuleBtn.innerHTML = 'Next Module';
+                }
+
+                if (quizScores[moduleIndex] && quizScores[moduleIndex] >= passingScore) {
+                    nextModuleBtn.classList.remove('next-button-locked');
+                } else {
+                    nextModuleBtn.classList.add('next-button-locked');
+                }
+
+            } catch (error) {
+                container.innerHTML = `<div class="text-red-500 font-bold">Error: ${error.message}</div>`;
             }
         }
 
         function nextModule() {
-            if (currentModule < modules.length - 1) {
-                currentModule += 1;
-                renderApp();
-            } else {
-                lessonContent.innerHTML = `
-                    <div class="empty-state">
-                        <h2>Course complete</h2>
-                        <p>You now have the core beginner loop: read the idea, edit code, run it, inspect output, and answer a check.</p>
-                        <p>Next project: turn the final study coach into a small tool for your own work, fitness, budget, or learning routine.</p>
-                    </div>
-                `;
+            if (currentModuleIndex < totalModules && quizScores[currentModuleIndex] >= passingScore) {
+                currentModuleIndex++;
+                updateProgressBar();
+                loadModuleContent(currentModuleIndex);
+                window.scrollTo(0, 0);
+            } else if (currentModuleIndex === totalModules && quizScores[currentModuleIndex] >= passingScore) {
+                finishCourse();
             }
         }
 
-        moduleList.addEventListener("click", (event) => {
-            const button = event.target.closest("[data-module]");
-            if (!button) return;
-            currentModule = Number(button.dataset.module);
-            renderApp();
-        });
+        function previousModule() {
+            if (currentModuleIndex > 1) {
+                currentModuleIndex--;
+                updateProgressBar();
+                loadModuleContent(currentModuleIndex);
+                window.scrollTo(0, 0);
+            }
+        }
 
-        document.getElementById("runTopBtn").addEventListener("click", runCode);
-        document.getElementById("resetProgressBtn").addEventListener("click", () => {
-            progress = { completed: [] };
-            saveProgress();
-            renderApp();
-        });
+        function updateProgressBar() {
+            const progress = (currentModuleIndex / totalModules) * 100;
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) {
+                progressBar.style.width = `${progress}%`;
+            }
+        }
 
-        renderApp();
+        function finishCourse() {
+            const container = document.getElementById('course-content-container');
+            const nextModuleBtn = document.getElementById('nextModuleBtn');
+            const previousModuleBtn = document.getElementById('previousModuleBtn');
+
+            container.innerHTML = `<div class="completion-message">
+                <h2>Course Complete</h2>
+                <p>You completed all six AI and Machine Learning modules.</p>
+                <p>Next step: build the Module 6 capstone project and add it to your portfolio.</p>
+            </div>`;
+
+            if (nextModuleBtn) {
+                nextModuleBtn.style.display = 'none';
+            }
+            if (previousModuleBtn) {
+                previousModuleBtn.style.display = 'block';
+            }
+            window.scrollTo(0, 0);
+        }
+
+        window.onload = () => {
+            currentModuleIndex = 1;
+            updateProgressBar();
+            loadModuleContent(currentModuleIndex);
+        };
     </script>
 </body>
 </html>

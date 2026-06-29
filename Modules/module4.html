@@ -3,9 +3,19 @@
     <h3>Text Preprocessing</h3>
     <p>Natural Language Processing (NLP) is a subfield of AI that focuses on enabling computers to understand human language. <strong>Text Preprocessing</strong> is a crucial step before any NLP task.</p>
     <p>Key steps include: <strong>Tokenization</strong>, <strong>Lowercasing</strong>, <strong>Stop Word Removal</strong>, <strong>Stemming</strong> (a crude word-root reduction), and <strong>Lemmatization</strong> (a more sophisticated word-root reduction considering context).</p>
+    <div class="bg-terminal-code p-4 rounded-lg border border-neon-green shadow-lg mb-4">
+        <h4 class="font-bold mb-3 text-neon-green">What you are about to code</h4>
+        <ul class="list-disc pl-6 space-y-2">
+            <li><strong>lower()</strong> normalizes text so "Natural" and "natural" are treated the same.</li>
+            <li><strong>word_tokenize</strong> splits a sentence into individual tokens.</li>
+            <li><strong>stopwords</strong> provides common words that are often removed before modeling.</li>
+            <li><strong>word.isalpha()</strong> keeps word tokens and removes punctuation tokens.</li>
+            <li>The final filtered list is a cleaner version of the original sentence.</li>
+        </ul>
+    </div>
     <div class="bg-terminal-code p-4 rounded-lg border border-neon-green shadow-lg">
         <h4 class="font-bold mb-3 text-neon-green">Hands-on: NLP Basics</h4>
-        <p>Before running this code, you may need to download NLTK data. Open a Python terminal and run `nltk.download('punkt')` and `nltk.download('stopwords')`.</p>
+        <p>Before running this code, you may need to download NLTK data. Open a Python terminal and run <code>nltk.download('punkt')</code> and <code>nltk.download('stopwords')</code>.</p>
         <pre class="jupyter-code"><code>import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -27,6 +37,7 @@ filtered_tokens = [word for word in tokens if word.isalpha() and word not in sto
 print(f"Filtered tokens: {filtered_tokens}")
 </code></pre>
     </div>
+    <p><strong>Checkpoint before the quiz:</strong> NLP preprocessing turns raw text into cleaner tokens so a model can focus on meaningful words.</p>
     <h4>Knowledge Check: Module 4 Quiz</h4>
     <div class="quiz-container mb-4">
         <h4 class="font-semibold text-neon-green mb-3">Quiz 4: NLP Basics</h4>
