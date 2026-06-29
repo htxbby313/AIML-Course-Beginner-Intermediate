@@ -312,6 +312,7 @@
         const totalModules = 6;
         const quizScores = {};
         const passingScore = 0.8;
+        let activeLessonPager = null;
 
         const allQuizzes = {
             1: [
@@ -405,14 +406,10 @@
                     selectedOption.classList.add('correct-answer');
                     selectedOption.classList.remove('selected-answer');
                 } else {
-                    resultText.innerHTML = `❌ <strong>Question ${qIndex + 1}: Incorrect.</strong> Correct answer was: "${q.options[q.correct]}". ${q.explanation}`;
+                    resultText.innerHTML = `❌ <strong>Question ${qIndex + 1}: Review this concept.</strong> ${q.explanation}`;
                     if (selectedOption) {
                         selectedOption.classList.add('incorrect-answer');
                         selectedOption.classList.remove('selected-answer');
-                    }
-                    const correctOption = quizContainers[moduleIndex].querySelector(`.quiz-option[data-question="${qIndex}"][data-option="${q.correct}"]`);
-                    if (correctOption) {
-                         correctOption.classList.add('correct-answer');
                     }
                 }
                 resultsDiv.appendChild(resultText);
@@ -432,12 +429,28 @@
                 if (nextModuleBtn) nextModuleBtn.classList.remove('next-button-locked');
 
             } else {
-                finalResult.innerHTML = `<strong>Quiz Failed.</strong> You scored ${Math.round(score * 100)}%. Please review the material and try again.`;
+                quizScores[moduleIndex] = 0;
+                finalResult.innerHTML = `<strong>Quiz Failed.</strong> You scored ${Math.round(score * 100)}%. Review the lesson pages, then retake the knowledge check. Correct answers are not shown so you can learn the concept instead of memorizing the option.`;
                 finalResult.className = "text-xl font-bold text-red-400 mt-4";
                 if (nextModuleBtn) nextModuleBtn.classList.add('next-button-locked');
+                setTimeout(() => {
+                    restartCurrentLesson();
+                }, 2200);
             }
             resultsDiv.prepend(finalResult);
             resultsDiv.classList.remove('hidden');
+        }
+
+        function restartCurrentLesson() {
+            const restartNotice = document.getElementById('restartNotice');
+            if (restartNotice) {
+                restartNotice.textContent = 'Knowledge check not passed yet. Start again from this lesson page, then return to the check when ready.';
+                restartNotice.style.display = 'block';
+            }
+            if (activeLessonPager) {
+                activeLessonPager.goTo(0);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         async function loadModuleContent(moduleIndex) {
@@ -624,7 +637,13 @@
                 <div class="lesson-pager-status" aria-live="polite"></div>
                 <button class="action-button lesson-next-page" type="button">Next Page</button>
             `;
+            const notice = document.createElement('div');
+            notice.id = 'restartNotice';
+            notice.className = 'course-page';
+            notice.style.display = 'none';
+            notice.style.marginTop = '0';
             contentRoot.insertBefore(pager, activePages[0]);
+            contentRoot.insertBefore(notice, activePages[0]);
 
             const updatePager = () => {
                 activePages.forEach((page, index) => {
@@ -637,6 +656,13 @@
                 status.textContent = `${label} ${activeIndex + 1} of ${activePages.length}`;
                 prev.disabled = activeIndex === 0;
                 next.disabled = activeIndex === activePages.length - 1;
+            };
+
+            activeLessonPager = {
+                goTo(index) {
+                    activeIndex = Math.max(0, Math.min(index, activePages.length - 1));
+                    updatePager();
+                }
             };
 
             pager.querySelector('.lesson-prev-page').addEventListener('click', () => {
