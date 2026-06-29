@@ -12,10 +12,14 @@
             font-family: 'Roboto Mono', monospace;
             background-color: #0d1117;
             color: #00ff41;
-            padding: 2rem;
+            padding: 1.5rem;
             min-height: 100vh;
         }
-        .container { max-width: 1200px; }
+        .container {
+            max-width: 1180px;
+            background: rgba(0, 24, 7, 0.92) !important;
+            padding: 1.25rem !important;
+        }
         .text-neon-green { color: #00ff41; }
         .bg-matrix-green { background-color: #004d00; }
         .border-neon-green { border-color: #00ff41; }
@@ -31,13 +35,26 @@
             z-index: 50;
         }
         .quiz-option {
+            display: block;
+            width: 100%;
+            text-align: left;
             cursor: pointer;
             transition: all 0.2s ease-in-out;
             line-height: 1.5;
+            border: 1px solid rgba(0, 255, 65, 0.35);
+            color: #d7ffe0;
+            background: #101820;
+            min-height: 48px;
         }
         .quiz-option:hover {
             transform: scale(1.01);
             box-shadow: 0 0 5px #00ff41;
+        }
+        .quiz-option.selected-answer {
+            color: #ffffff;
+            background: #006600 !important;
+            border-color: #00ff41;
+            box-shadow: 0 0 12px rgba(0, 255, 65, 0.3);
         }
         .explanation {
             font-size: 0.875rem;
@@ -49,43 +66,55 @@
             border: 1px solid #00ff41;
             padding: 1rem;
             border-radius: 0.5rem;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+            white-space: pre;
+            overflow-x: auto;
             box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
             font-size: 0.875rem;
             line-height: 1.4;
+            background: #020806;
         }
         .course-title {
-            font-size: 3rem;
+            font-size: clamp(1.75rem, 4vw, 2.55rem);
             font-weight: 700;
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             color: #00ff41;
-            text-shadow: 0 0 15px #00ff41, 0 0 7px #00ff41;
+            text-shadow: 0 0 8px rgba(0, 255, 65, 0.75);
             line-height: 1.2;
         }
+        #course-content-container > .page-label {
+            margin-top: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        #course-content-container > h2 {
+            margin: 0.65rem 0 1rem;
+            font-size: clamp(1rem, 2vw, 1.28rem);
+            color: #00ff41;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
         .module-content h2 {
-            font-size: 2.5rem;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
             font-weight: 700;
             text-transform: uppercase;
-            margin-top: 3rem;
+            margin-top: 0.75rem;
             margin-bottom: 1.5rem;
             padding-bottom: 0.5rem;
             border-bottom: 2px solid #00ff41;
             color: #00ff41;
-            text-shadow: 0 0 10px #00ff41;
+            text-shadow: 0 0 7px rgba(0, 255, 65, 0.65);
         }
         .module-content h3 {
-            font-size: 1.75rem;
-            font-style: italic;
+            font-size: clamp(1.25rem, 3vw, 1.65rem);
+            font-style: normal;
             font-weight: 700;
             margin-top: 2.5rem;
             margin-bottom: 1rem;
             color: #00e63c;
-            text-shadow: 0 0 5px #00e63c;
+            text-shadow: 0 0 4px rgba(0, 230, 60, 0.45);
         }
         .module-content h4 {
-            font-size: 1.25rem;
+            font-size: 1.05rem;
             font-weight: 700;
             margin-top: 2rem;
             margin-bottom: 1rem;
@@ -93,17 +122,114 @@
         }
         .module-content p {
             margin-bottom: 1.25rem;
-            line-height: 1.7;
+            line-height: 1.8;
+            color: #d7ffe0;
+        }
+        .module-content strong {
+            color: #ffffff;
+        }
+        .course-page {
+            border: 1px solid rgba(0, 255, 65, 0.4);
+            border-radius: 0.75rem;
+            background: rgba(0, 10, 4, 0.82);
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 0 18px rgba(0, 255, 65, 0.12);
+        }
+        .page-label {
+            display: inline-block;
+            margin-bottom: 0.8rem;
+            padding: 0.25rem 0.55rem;
+            border: 1px solid #00ff41;
+            border-radius: 999px;
+            color: #001a00;
+            background: #00ff41;
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .lesson-page {
+            display: none;
+            min-height: 420px;
+        }
+        .lesson-page.active-page {
+            display: block;
+        }
+        .lesson-pager {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin: 0.75rem 0 1rem;
+            padding: 0.75rem;
+            border: 1px solid rgba(0, 255, 65, 0.35);
+            border-radius: 0.75rem;
+            background: rgba(0, 0, 0, 0.28);
+        }
+        .lesson-pager-status {
+            color: #d7ffe0;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        .lesson-pager-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .code-workspace {
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 1px dashed rgba(0, 255, 65, 0.55);
+            border-radius: 0.75rem;
+            background: rgba(0, 0, 0, 0.35);
+        }
+        .code-workspace label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+            font-weight: 700;
+        }
+        .practice-editor {
+            width: 100%;
+            min-height: 180px;
+            padding: 1rem;
+            border: 1px solid rgba(0, 255, 65, 0.5);
+            border-radius: 0.5rem;
+            color: #d7ffe0;
+            background: #020806;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.55;
+            white-space: pre;
+            overflow: auto;
+            resize: vertical;
+        }
+        .workspace-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+        .workspace-note {
+            margin-top: 0.75rem;
+            margin-bottom: 0;
+            color: #9af7aa;
+            font-size: 0.9rem;
         }
         .jupyter-markdown, .jupyter-code {
             margin-top: 1.5rem;
             margin-bottom: 1.5rem;
         }
+        .jupyter-code {
+            max-height: 180px;
+            overflow: auto;
+        }
         .quiz-container {
             border: 1px solid #00ff41;
-            margin-top: 3.5rem;
+            margin-top: 2rem;
             padding: 1.5rem;
             border-radius: 0.75rem;
+            background: rgba(0, 10, 4, 0.92);
             box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
         }
         .action-button {
@@ -119,6 +245,11 @@
         .action-button:hover {
             box-shadow: 0 0 15px #00ff41;
             background-color: #006600;
+        }
+        .action-button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
         }
         .module-view { display: none; }
         .module-view.active { display: block; }
@@ -142,6 +273,19 @@
         }
         .module-view {
             scrollbar-width: none;
+        }
+        @media (max-width: 720px) {
+            body { padding: 0.75rem; }
+            .container { padding: 1rem !important; }
+            .course-title { margin-bottom: 1.25rem; }
+            .course-page { padding: 1rem; }
+            .lesson-page { min-height: 0; }
+            .lesson-pager,
+            .lesson-pager-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .workspace-actions .action-button { width: 100%; }
         }
     </style>
 </head>
@@ -222,11 +366,11 @@
             allQuizzes[moduleIndex].forEach((q, qIndex) => {
                 quizHTML += `<div class="mb-4">
                     <p class="font-bold mb-2 text-white">Q${qIndex + 1}: ${q.question}</p>
-                    <ul class="space-y-2">`;
+                    <div class="space-y-2">`;
                 q.options.forEach((option, oIndex) => {
-                    quizHTML += `<li class="quiz-option bg-gray-800 p-3 rounded-md" data-question="${qIndex}" data-option="${oIndex}">${option}</li>`;
+                    quizHTML += `<button class="quiz-option p-3 rounded-md" type="button" data-question="${qIndex}" data-option="${oIndex}">${option}</button>`;
                 });
-                quizHTML += `</ul>
+                quizHTML += `</div>
                 </div>`;
             });
             document.getElementById(quizContainerId).innerHTML = quizHTML;
@@ -240,8 +384,8 @@
             const questionIndex = parseInt(target.dataset.question);
             const container = target.closest('.quiz-container');
             const options = container.querySelectorAll(`[data-question="${questionIndex}"]`);
-            options.forEach(opt => opt.classList.remove('bg-matrix-green'));
-            target.classList.add('bg-matrix-green');
+            options.forEach(opt => opt.classList.remove('selected-answer'));
+            target.classList.add('selected-answer');
         }
 
         function runQuiz(moduleIndex) {
@@ -251,7 +395,7 @@
             resultsDiv.innerHTML = '';
 
             questions.forEach((q, qIndex) => {
-                const selectedOption = quizContainers[moduleIndex].querySelector(`.quiz-option[data-question="${qIndex}"].bg-matrix-green`);
+                const selectedOption = quizContainers[moduleIndex].querySelector(`.quiz-option[data-question="${qIndex}"].selected-answer`);
                 const isCorrect = selectedOption && parseInt(selectedOption.dataset.option) === q.correct;
                 const resultText = document.createElement('p');
 
@@ -259,12 +403,12 @@
                     correctAnswers++;
                     resultText.innerHTML = `✅ <strong>Question ${qIndex + 1}: Correct!</strong> ${q.explanation}`;
                     selectedOption.classList.add('correct-answer');
-                    selectedOption.classList.remove('bg-matrix-green');
+                    selectedOption.classList.remove('selected-answer');
                 } else {
                     resultText.innerHTML = `❌ <strong>Question ${qIndex + 1}: Incorrect.</strong> Correct answer was: "${q.options[q.correct]}". ${q.explanation}`;
                     if (selectedOption) {
                         selectedOption.classList.add('incorrect-answer');
-                        selectedOption.classList.remove('bg-matrix-green');
+                        selectedOption.classList.remove('selected-answer');
                     }
                     const correctOption = quizContainers[moduleIndex].querySelector(`.quiz-option[data-question="${qIndex}"][data-option="${q.correct}"]`);
                     if (correctOption) {
@@ -308,10 +452,12 @@
                 }
                 const htmlContent = await response.text();
                 container.innerHTML = htmlContent;
+                enhanceModuleContent(moduleIndex);
 
                 if (allQuizzes[moduleIndex]) {
                     loadQuiz(moduleIndex);
                 }
+                setupLessonPager(moduleIndex);
 
                 const nextModuleBtn = document.getElementById('nextModuleBtn');
                 const previousModuleBtn = document.getElementById('previousModuleBtn');
@@ -339,6 +485,177 @@
             } catch (error) {
                 container.innerHTML = `<div class="text-red-500 font-bold">Error: ${error.message}</div>`;
             }
+        }
+
+        function enhanceModuleContent(moduleIndex) {
+            const container = document.getElementById('course-content-container');
+            const contentRoot = container.querySelector('.prose') || container;
+            contentRoot.classList.add('module-content');
+
+            const moduleTitle = container.querySelector('h2');
+            if (moduleTitle) {
+                moduleTitle.insertAdjacentHTML('beforebegin', '<div class="page-label">Module</div>');
+            }
+
+            const quizContainer = container.querySelector('.quiz-container');
+            if (quizContainer) {
+                quizContainer.classList.add('course-page');
+                quizContainer.insertAdjacentHTML('afterbegin', '<div class="page-label">Knowledge Check</div>');
+            }
+
+            container.querySelectorAll('.bg-terminal-code').forEach((block) => {
+                if (block.closest('.quiz-container')) return;
+                block.classList.add('course-page');
+                if (!block.querySelector('.page-label')) {
+                    block.insertAdjacentHTML('afterbegin', '<div class="page-label">Code Practice</div>');
+                }
+            });
+
+            container.querySelectorAll('pre.jupyter-code code').forEach((codeBlock, index) => {
+                const codeText = codeBlock.textContent.trimEnd();
+                const codePanel = codeBlock.closest('.bg-terminal-code') || codeBlock.closest('pre');
+                if (!codePanel || codePanel.nextElementSibling?.classList.contains('code-workspace')) return;
+
+                const workspace = document.createElement('div');
+                workspace.className = 'code-workspace';
+                workspace.innerHTML = `
+                    <label for="practice-editor-${moduleIndex}-${index}">Write your own version here</label>
+                    <textarea id="practice-editor-${moduleIndex}-${index}" class="practice-editor" spellcheck="false" wrap="off">${codeText}</textarea>
+                    <div class="workspace-actions">
+                        <button class="action-button reset-practice" type="button">Reset to example</button>
+                        <button class="action-button copy-practice" type="button">Copy my code</button>
+                    </div>
+                    <p class="workspace-note">Run this in your notebook or Python environment. Make one small change, run it, and explain what changed before moving on.</p>
+                `;
+                codePanel.insertAdjacentElement('afterend', workspace);
+            });
+
+            container.querySelectorAll('.reset-practice').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const workspace = button.closest('.code-workspace');
+                    const example = workspace.previousElementSibling.querySelector('code')?.textContent.trimEnd() || '';
+                    workspace.querySelector('textarea').value = example;
+                });
+            });
+
+            container.querySelectorAll('.copy-practice').forEach((button) => {
+                button.addEventListener('click', async () => {
+                    const textarea = button.closest('.code-workspace').querySelector('textarea');
+                    await navigator.clipboard.writeText(textarea.value);
+                    button.textContent = 'Copied';
+                    setTimeout(() => { button.textContent = 'Copy my code'; }, 1200);
+                });
+            });
+        }
+
+        function setupLessonPager(moduleIndex) {
+            const container = document.getElementById('course-content-container');
+            const contentRoot = container.querySelector('.prose') || container;
+            if (contentRoot.querySelector('.lesson-pager')) return;
+
+            const originalChildren = Array.from(contentRoot.children);
+            const pages = [];
+            let currentPage = null;
+
+            const createPage = (label) => {
+                const page = document.createElement('section');
+                page.className = 'lesson-page';
+                page.dataset.pageLabel = label;
+                pages.push(page);
+                return page;
+            };
+
+            const flushCurrentPage = () => {
+                if (currentPage && currentPage.childElementCount > 0) {
+                    contentRoot.appendChild(currentPage);
+                }
+                currentPage = null;
+            };
+
+            originalChildren.forEach((child) => {
+                if (child.parentElement?.classList.contains('lesson-page')) return;
+
+                const isQuiz = child.classList.contains('quiz-container');
+                const isCoursePage = child.classList.contains('course-page');
+                const isWorkspace = child.classList.contains('code-workspace');
+
+                if (isQuiz) {
+                    flushCurrentPage();
+                    const quizPage = createPage('Knowledge Check');
+                    quizPage.appendChild(child);
+                    contentRoot.appendChild(quizPage);
+                    return;
+                }
+
+                if (isCoursePage || isWorkspace) {
+                    flushCurrentPage();
+                    const label = child.querySelector('.page-label')?.textContent || (isWorkspace ? 'Code Practice' : 'Course Page');
+                    const page = createPage(label);
+                    page.appendChild(child);
+
+                    let next = originalChildren[originalChildren.indexOf(child) + 1];
+                    if (isCoursePage && next && next.classList.contains('code-workspace')) {
+                        page.appendChild(next);
+                    }
+
+                    if (!page.isConnected) {
+                        contentRoot.appendChild(page);
+                    }
+                    return;
+                }
+
+                if (!currentPage) {
+                    currentPage = createPage('Lesson Page');
+                    currentPage.insertAdjacentHTML('afterbegin', '<div class="page-label">Lesson Page</div>');
+                }
+                currentPage.appendChild(child);
+            });
+
+            flushCurrentPage();
+
+            const activePages = Array.from(contentRoot.querySelectorAll(':scope > .lesson-page'));
+            if (activePages.length === 0) return;
+
+            let activeIndex = 0;
+            const pager = document.createElement('div');
+            pager.className = 'lesson-pager';
+            pager.innerHTML = `
+                <button class="action-button lesson-prev-page" type="button">Previous Page</button>
+                <div class="lesson-pager-status" aria-live="polite"></div>
+                <button class="action-button lesson-next-page" type="button">Next Page</button>
+            `;
+            contentRoot.insertBefore(pager, activePages[0]);
+
+            const updatePager = () => {
+                activePages.forEach((page, index) => {
+                    page.classList.toggle('active-page', index === activeIndex);
+                });
+                const status = pager.querySelector('.lesson-pager-status');
+                const prev = pager.querySelector('.lesson-prev-page');
+                const next = pager.querySelector('.lesson-next-page');
+                const label = activePages[activeIndex].dataset.pageLabel || 'Page';
+                status.textContent = `${label} ${activeIndex + 1} of ${activePages.length}`;
+                prev.disabled = activeIndex === 0;
+                next.disabled = activeIndex === activePages.length - 1;
+            };
+
+            pager.querySelector('.lesson-prev-page').addEventListener('click', () => {
+                if (activeIndex > 0) {
+                    activeIndex -= 1;
+                    updatePager();
+                    pager.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+
+            pager.querySelector('.lesson-next-page').addEventListener('click', () => {
+                if (activeIndex < activePages.length - 1) {
+                    activeIndex += 1;
+                    updatePager();
+                    pager.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+
+            updatePager();
         }
 
         function nextModule() {
