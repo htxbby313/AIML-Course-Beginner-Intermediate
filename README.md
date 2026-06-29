@@ -52,6 +52,19 @@ How to Get Started
 * Install all necessary dependencies with a single command:
   
       pip install -r requirements.txt
-3. **Start Learning:** Open `index.html` in your web browser to begin the course. Each module's content is contained within its respective folder in the `modules/` directory, which you can also view directly.
+3. **Start Learning:** Serve the project locally, then open it in your browser:
+
+      python -m http.server 8000
+
+   Then visit `http://localhost:8000/`.
+
+The main course page is designed as a one-stop beginner workspace:
+
+* Read plain-English AI and machine learning lessons.
+* Edit and run beginner Python examples directly in the browser.
+* See output immediately without installing Python first.
+* Answer knowledge checks that save progress locally in the browser.
+
+The browser code runner uses Pyodide from a CDN, so the first code run requires an internet connection.
 
 Enjoy the course!
