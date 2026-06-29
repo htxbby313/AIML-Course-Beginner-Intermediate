@@ -526,6 +526,7 @@
 
             container.querySelectorAll('pre.jupyter-code code').forEach((codeBlock, index) => {
                 const codeText = codeBlock.textContent.trimEnd();
+                const promptText = buildCodePrompt(codeText, moduleIndex);
                 const codePanel = codeBlock.closest('.bg-terminal-code') || codeBlock.closest('pre');
                 if (!codePanel || codePanel.nextElementSibling?.classList.contains('code-workspace')) return;
 
@@ -533,21 +534,22 @@
                 workspace.className = 'code-workspace';
                 workspace.innerHTML = `
                     <label for="practice-editor-${moduleIndex}-${index}">Write your own version here</label>
-                    <textarea id="practice-editor-${moduleIndex}-${index}" class="practice-editor" spellcheck="false" wrap="off">${codeText}</textarea>
+                    <textarea id="practice-editor-${moduleIndex}-${index}" class="practice-editor" spellcheck="false" wrap="off"></textarea>
                     <div class="workspace-actions">
-                        <button class="action-button reset-practice" type="button">Reset to example</button>
+                        <button class="action-button reset-practice" type="button">Reset prompts</button>
                         <button class="action-button copy-practice" type="button">Copy my code</button>
                     </div>
-                    <p class="workspace-note">Run this in your notebook or Python environment. Make one small change, run it, and explain what changed before moving on.</p>
+                    <p class="workspace-note">Only the prompts are provided here. Type the actual Python yourself, then run it in your notebook or Python environment.</p>
                 `;
+                workspace.dataset.prompt = promptText;
+                workspace.querySelector('textarea').value = promptText;
                 codePanel.insertAdjacentElement('afterend', workspace);
             });
 
             container.querySelectorAll('.reset-practice').forEach((button) => {
                 button.addEventListener('click', () => {
                     const workspace = button.closest('.code-workspace');
-                    const example = workspace.previousElementSibling.querySelector('code')?.textContent.trimEnd() || '';
-                    workspace.querySelector('textarea').value = example;
+                    workspace.querySelector('textarea').value = workspace.dataset.prompt || '';
                 });
             });
 
@@ -559,6 +561,23 @@
                     setTimeout(() => { button.textContent = 'Copy my code'; }, 1200);
                 });
             });
+        }
+
+        function buildCodePrompt(codeText, moduleIndex) {
+            const commentLines = codeText
+                .split('\n')
+                .filter((line) => line.trim().startsWith('#'))
+                .map((line) => line.trim());
+
+            if (codeText.includes('import ')) {
+                commentLines.unshift('# Import the libraries used in the example.');
+            }
+
+            if (commentLines.length > 0) {
+                return commentLines.join('\n\n') + '\n\n';
+            }
+
+            return `# Module ${moduleIndex} practice\n\n# Read the example above.\n\n# Write the code yourself here.\n\n# Run it, then explain what each line does.\n\n`;
         }
 
         function setupLessonPager(moduleIndex) {
@@ -591,6 +610,8 @@
                 const isQuiz = child.classList.contains('quiz-container');
                 const isCoursePage = child.classList.contains('course-page');
                 const isWorkspace = child.classList.contains('code-workspace');
+                const isSectionHeading = child.tagName === 'H3';
+                const isKnowledgeHeading = child.tagName === 'H4' && child.textContent.toLowerCase().includes('knowledge check');
 
                 if (isQuiz) {
                     flushCurrentPage();
@@ -614,6 +635,18 @@
                     if (!page.isConnected) {
                         contentRoot.appendChild(page);
                     }
+                    return;
+                }
+
+                if (isKnowledgeHeading) {
+                    return;
+                }
+
+                if (isSectionHeading) {
+                    flushCurrentPage();
+                    currentPage = createPage(child.textContent.trim() || 'Lesson Page');
+                    currentPage.insertAdjacentHTML('afterbegin', '<div class="page-label">Lesson Page</div>');
+                    currentPage.appendChild(child);
                     return;
                 }
 
