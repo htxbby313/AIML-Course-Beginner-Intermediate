@@ -610,7 +610,7 @@
                 const isQuiz = child.classList.contains('quiz-container');
                 const isCoursePage = child.classList.contains('course-page');
                 const isWorkspace = child.classList.contains('code-workspace');
-                const isSectionHeading = child.tagName === 'H3';
+                const isSectionHeading = child.tagName === 'H3' || child.tagName === 'H4';
                 const isKnowledgeHeading = child.tagName === 'H4' && child.textContent.toLowerCase().includes('knowledge check');
 
                 if (isQuiz) {
