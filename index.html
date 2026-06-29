@@ -6,6 +6,7 @@
     <title>AI & Machine Learning Mastery Course</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='black'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-family='monospace' font-size='25' fill='%2300ff41'%3EAI%3C/text%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.28.0/full/pyodide.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -216,6 +217,31 @@
             color: #9af7aa;
             font-size: 0.9rem;
         }
+        .code-output {
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 1px solid rgba(0, 255, 65, 0.35);
+            border-radius: 0.5rem;
+            background: #020806;
+            color: #d7ffe0;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            font-size: 0.88rem;
+            line-height: 1.55;
+        }
+        .code-output.success {
+            border-color: #00ff41;
+            box-shadow: 0 0 12px rgba(0, 255, 65, 0.18);
+        }
+        .code-output.error {
+            border-color: #ff5c5c;
+            color: #ffd6d6;
+            box-shadow: 0 0 12px rgba(255, 92, 92, 0.16);
+        }
+        .code-output.loading {
+            border-color: #9af7aa;
+            color: #9af7aa;
+        }
         .jupyter-markdown, .jupyter-code {
             margin-top: 1.5rem;
             margin-bottom: 1.5rem;
@@ -313,6 +339,44 @@
         const quizScores = {};
         const passingScore = 0.8;
         let activeLessonPager = null;
+        let pyodideReadyPromise = null;
+
+        const exerciseChecks = {
+            '1-0': `
+assert 'np_array' in globals(), "Create a variable named np_array."
+assert tuple(np_array.shape) == (2, 3), "np_array should have 2 rows and 3 columns."
+assert 'df' in globals(), "Create a variable named df."
+assert list(df.columns) == ['Name', 'Power Level'], "df should have Name and Power Level columns."
+`,
+            '2-0': `
+assert 'df' in globals(), "Create a variable named df."
+assert df['satisfaction_score'].isna().sum() == 0, "Fill the missing satisfaction_score value."
+assert any(str(col).startswith('product_') for col in df.columns), "Use get_dummies to create product columns."
+`,
+            '3-0': `
+assert 'predictions' in globals(), "Create a variable named predictions."
+assert len(predictions) == 4, "Create one prediction for each training example."
+assert set(int(x) for x in predictions).issubset({0, 1}), "Predictions should be 0 or 1 labels."
+`,
+            '4-0': `
+assert 'filtered_tokens' in globals(), "Create a variable named filtered_tokens."
+assert isinstance(filtered_tokens, list), "filtered_tokens should be a list."
+assert 'natural' in filtered_tokens and 'language' in filtered_tokens, "Keep meaningful words from the sentence."
+assert 'is' not in filtered_tokens and 'a' not in filtered_tokens, "Remove common stop words."
+`,
+            '5-0': `
+assert 'normalized_image' in globals(), "Create a variable named normalized_image."
+assert float(normalized_image.max()) <= 1.0, "Normalize pixel values so the maximum is 1.0 or lower."
+assert float(normalized_image.min()) >= 0.0, "Normalized pixel values should not go below 0."
+`,
+            '6-0': `
+assert 'purpose' in globals() and purpose.strip(), "Write a real purpose for your agent."
+assert 'allowed_inputs' in globals() and len(allowed_inputs) > 0, "List at least one allowed input."
+assert 'allowed_actions' in globals() and len(allowed_actions) > 0, "List at least one safe allowed action."
+assert 'blocked_actions' in globals() and len(blocked_actions) > 0, "List at least one blocked action."
+assert 'explanation_style' in globals() and explanation_style.strip(), "Describe how your agent should explain itself."
+`
+        };
 
         const allQuizzes = {
             1: [
@@ -536,12 +600,16 @@
                     <label for="practice-editor-${moduleIndex}-${index}">Write your own version here</label>
                     <textarea id="practice-editor-${moduleIndex}-${index}" class="practice-editor" spellcheck="false" wrap="off"></textarea>
                     <div class="workspace-actions">
+                        <button class="action-button run-practice" type="button">Run Code</button>
                         <button class="action-button reset-practice" type="button">Reset prompts</button>
                         <button class="action-button copy-practice" type="button">Copy my code</button>
                     </div>
-                    <p class="workspace-note">Only the prompts are provided here. Type the actual Python yourself, then run it in your notebook or Python environment.</p>
+                    <p class="workspace-note">Only the prompts are provided here. Type the actual Python yourself, then run it in this browser-based course.</p>
+                    <div class="code-output" aria-live="polite">Output and feedback will appear here after you run your code.</div>
                 `;
                 workspace.dataset.prompt = promptText;
+                workspace.dataset.module = String(moduleIndex);
+                workspace.dataset.exercise = String(index);
                 workspace.querySelector('textarea').value = promptText;
                 codePanel.insertAdjacentElement('afterend', workspace);
             });
@@ -561,6 +629,123 @@
                     setTimeout(() => { button.textContent = 'Copy my code'; }, 1200);
                 });
             });
+
+            container.querySelectorAll('.run-practice').forEach((button) => {
+                button.addEventListener('click', () => runPracticeCode(button));
+            });
+        }
+
+        async function getPyodideRuntime() {
+            if (!pyodideReadyPromise) {
+                pyodideReadyPromise = loadPyodide({
+                    indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.28.0/full/'
+                });
+            }
+            return pyodideReadyPromise;
+        }
+
+        function indentPython(code) {
+            return code.split('\n').map(line => `    ${line}`).join('\n');
+        }
+
+        function explainPythonError(errorText) {
+            if (errorText.includes('SyntaxError')) {
+                return 'Python could not understand the structure of your code. Check missing quotes, parentheses, colons, commas, and line breaks.';
+            }
+            if (errorText.includes('IndentationError')) {
+                return 'Python uses indentation to understand code blocks. Make sure lines inside loops, if statements, and functions are indented consistently.';
+            }
+            if (errorText.includes('NameError')) {
+                return 'A name is being used before Python knows what it means. Check spelling and make sure you created the variable before using it.';
+            }
+            if (errorText.includes('ModuleNotFoundError') || errorText.includes('ImportError')) {
+                return 'That package is not available in this browser runner. Use the libraries shown in the lesson example, or rewrite this practice with built-in Python tools.';
+            }
+            if (errorText.includes('TypeError')) {
+                return 'A value is the wrong type for the operation. For example, Python may be trying to add text to a number or call something that is not a function.';
+            }
+            if (errorText.includes('KeyError')) {
+                return 'A dictionary or DataFrame column name was requested but does not exist. Check the exact spelling of the key or column.';
+            }
+            if (errorText.includes('AssertionError')) {
+                return 'Your code ran, but it did not match the lesson goal yet. Read the validation message and compare your variable names and data shape to the prompt.';
+            }
+            return 'Your code ran into an error. Read the traceback from bottom to top; the last line usually names the problem.';
+        }
+
+        async function runPracticeCode(button) {
+            const workspace = button.closest('.code-workspace');
+            const textarea = workspace.querySelector('textarea');
+            const output = workspace.querySelector('.code-output');
+            const code = textarea.value.trimEnd();
+            const checkKey = `${workspace.dataset.module}-${workspace.dataset.exercise}`;
+            const checkCode = exerciseChecks[checkKey] || '';
+
+            if (!code.trim() || code.trim().split('\n').every(line => line.trim().startsWith('#'))) {
+                output.className = 'code-output error';
+                output.textContent = 'No runnable Python yet.\n\nThe editor starts with comments only. Add real Python lines under the comments, then run it again.';
+                return;
+            }
+
+            button.disabled = true;
+            output.className = 'code-output loading';
+            output.textContent = 'Starting the browser Python runner...';
+
+            try {
+                const pyodide = await getPyodideRuntime();
+                output.textContent = 'Loading any Python packages used by your imports...';
+                await pyodide.loadPackagesFromImports(code);
+
+                const wrappedCode = `
+import sys, io, traceback
+__student_stdout_buffer__ = io.StringIO()
+__student_stderr_buffer__ = io.StringIO()
+__old_stdout__, __old_stderr__ = sys.stdout, sys.stderr
+sys.stdout, sys.stderr = __student_stdout_buffer__, __student_stderr_buffer__
+try:
+    __student_namespace__ = {"__name__": "__main__"}
+    exec(${JSON.stringify(code)}, __student_namespace__)
+except Exception:
+    __student_error__ = traceback.format_exc()
+else:
+    __student_error__ = ""
+finally:
+    sys.stdout, sys.stderr = __old_stdout__, __old_stderr__
+__student_stdout__ = __student_stdout_buffer__.getvalue()
+__student_stderr__ = __student_stderr_buffer__.getvalue()
+`;
+                await pyodide.runPythonAsync(wrappedCode);
+
+                const runtimeError = pyodide.globals.get('__student_error__')?.toString() || '';
+                const stdout = pyodide.globals.get('__student_stdout__')?.toString() || '';
+                const stderr = pyodide.globals.get('__student_stderr__')?.toString() || '';
+
+                if (runtimeError) {
+                    output.className = 'code-output error';
+                    output.textContent = `Code ran into an error.\n\nWhat happened:\n${explainPythonError(runtimeError)}\n\nPython details:\n${runtimeError}`;
+                    return;
+                }
+
+                if (checkCode) {
+                    try {
+                        await pyodide.runPythonAsync(`exec(${JSON.stringify(checkCode)}, __student_namespace__)`);
+                    } catch (validationError) {
+                        const validationText = validationError.toString();
+                        output.className = 'code-output error';
+                        output.textContent = `Your code ran, but the lesson goal is not complete yet.\n\nWhat to fix:\n${explainPythonError(validationText)}\n\nValidation details:\n${validationText}\n\nYour output:\n${stdout || '(No printed output yet.)'}${stderr ? `\n\nWarnings:\n${stderr}` : ''}`;
+                        return;
+                    }
+                }
+
+                output.className = 'code-output success';
+                output.textContent = `Code ran successfully.\n\nValidation passed: your code matches the goal for this practice.\n\nOutput:\n${stdout || '(Your code did not print anything. That is okay if the lesson goal was about creating variables.)'}${stderr ? `\n\nWarnings:\n${stderr}` : ''}`;
+            } catch (error) {
+                const text = error.toString();
+                output.className = 'code-output error';
+                output.textContent = `The browser runner could not finish this run.\n\nWhat happened:\n${explainPythonError(text)}\n\nDetails:\n${text}`;
+            } finally {
+                button.disabled = false;
+            }
         }
 
         function buildCodePrompt(codeText, moduleIndex) {
