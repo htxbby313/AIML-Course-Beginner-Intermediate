@@ -1,13 +1,13 @@
-This file lists the Python libraries and their specific versions required to run the code in this course.
+# Python libraries required to run the examples in this course.
 
-Essential libraries for data manipulation and analysis.
+# Essential libraries for data manipulation and analysis.
+numpy==1.26.4
+pandas==2.2.2
+scikit-learn==1.5.0
 
-numpy==1.26.4pandas==2.2.2scikit-learn==1.5.0
+# Deep learning framework and its components.
+tensorflow==2.16.1
+keras==3.3.3
 
-Deep Learning framework and its components.
-
-tensorflow==2.16.1keras==3.3.3
-
-Natural Language Processing library.
-
+# Natural language processing library.
 nltk==3.8.1
