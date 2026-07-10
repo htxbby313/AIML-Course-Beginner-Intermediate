@@ -1,3 +1,45 @@
+<div class="module-content">
+<h2>Module 2: Core Machine Learning</h2>
+
+<h3>Why Data Preprocessing Matters</h3>
+<p>
+    Real-world data is messy. Columns have missing values, numbers are on wildly different scales, and text fields contain categories that algorithms can't read directly. If you feed raw, unprocessed data into a model, you will get poor results — no matter how sophisticated the algorithm.
+</p>
+<p>
+    <strong>Data preprocessing</strong> is the process of transforming raw data into a clean, structured format that machine learning algorithms can actually use. In most real projects, this takes up 60–80% of the total work.
+</p>
+
+<div class="info-box">
+    <div class="info-label">Rule of Thumb</div>
+    <p>"Garbage in, garbage out." A simple algorithm on clean data almost always outperforms a complex algorithm on dirty data. Master preprocessing and you're already ahead of most beginners.</p>
+</div>
+
+<h3>Step 1: Handling Missing Values</h3>
+<p>
+    Missing data (shown as <code>NaN</code> in Python) is extremely common. You have three options:
+</p>
+<ul>
+    <li><strong>Drop the row</strong> — only if missing data is rare and random</li>
+    <li><strong>Fill with a statistic</strong> — use the column's mean (for normally distributed data) or median (for skewed data) for numerical columns</li>
+    <li><strong>Fill with the most common value</strong> — use the mode for categorical columns</li>
+</ul>
+
+<h3>Step 2: Encoding Categorical Variables</h3>
+<p>
+    ML algorithms work with numbers. If a column contains text categories like <code>"Engineering"</code>, <code>"Marketing"</code>, <code>"Finance"</code>, you need to convert them. The most common technique is <strong>one-hot encoding</strong>: create a new binary column for each category.
+</p>
+
+<h3>Step 3: Feature Scaling</h3>
+<p>
+    If one column ranges from 0–1 (e.g. a probability) and another ranges from 0–1,000,000 (e.g. salary), algorithms that use distance or gradient descent will be dominated by the large-scale column. Scaling brings all features to a comparable range.
+</p>
+<ul>
+    <li><strong>StandardScaler</strong> — transforms each feature to have mean=0 and std=1. Use for most algorithms.</li>
+    <li><strong>MinMaxScaler</strong> — scales values to [0, 1]. Use when you need a bounded range.</li>
+</ul>
+
+<h4>Hands-On: Full Preprocessing Pipeline</h4>
+<pre><code>import pandas as pd
 <h2>MODULE 2: CORE MACHINE LEARNING</h2>
 <div class="prose text-neon-green max-w-none">
     <h3>Data Preprocessing</h3>
@@ -22,13 +64,188 @@
         <h4 class="font-bold mb-3 text-neon-green">Hands-on: Data Cleaning</h4>
         <pre class="jupyter-code"><code>import pandas as pd
 import numpy as np
+from sklearn.preprocessing import StandardScaler
 
-# Sample messy dataset with missing values (np.nan) and categorical data
+# ── Create a realistic messy dataset ─────────────────────────────────
 data = {
-    'satisfaction_score': [4, 5, 2, np.nan, 5],
-    'product_type': ['A', 'B', 'A', 'C', 'B']
+    'age':           [25, 32, np.nan, 41, 28, 55, np.nan, 33],
+    'salary':        [45000, 72000, 58000, np.nan, 51000, 98000, 63000, 74000],
+    'department':    ['Eng', 'HR', 'Eng', 'Finance', 'HR', 'Finance', 'Eng', 'HR'],
+    'left_company':  [0, 1, 0, 0, 1, 0, 1, 0]   # target: did they leave?
 }
 df = pd.DataFrame(data)
+print("=== Raw Data ===")
+print(df)
+print(f"\nMissing values:\n{df.isnull().sum()}")
+
+# ── Step 1: Handle missing values ────────────────────────────────────
+df['age'].fillna(df['age'].median(), inplace=True)
+df['salary'].fillna(df['salary'].median(), inplace=True)
+print("\n=== After filling missing values ===")
+print(df[['age', 'salary']].head())
+
+# ── Step 2: One-hot encode the 'department' column ───────────────────
+df = pd.get_dummies(df, columns=['department'], prefix='dept')
+print("\n=== After one-hot encoding ===")
+print(df.head())
+
+# ── Step 3: Scale numerical features ─────────────────────────────────
+features = ['age', 'salary']
+scaler = StandardScaler()
+df[features] = scaler.fit_transform(df[features])
+
+print("\n=== After scaling (age & salary now have mean≈0, std≈1) ===")
+print(df.round(3))
+print(f"\nAge mean: {df['age'].mean():.3f}, std: {df['age'].std():.3f}")
+</code></pre>
+
+<h3>Supervised Learning: Regression</h3>
+<p>
+    <strong>Regression</strong> predicts a continuous numerical value. The simplest form is <strong>Linear Regression</strong>, which fits a straight line through your data points to model the relationship between input features and the target output.
+</p>
+<p>
+    The model learns two things: a <strong>slope</strong> (how much the output changes per unit of input) and an <strong>intercept</strong> (the baseline value). For multiple features, it learns one slope per feature.
+</p>
+
+<h4>Hands-On: Predicting House Prices</h4>
+<pre><code>from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+import numpy as np
+
+# ── Generate synthetic house price data ──────────────────────────────
+np.random.seed(42)
+n = 200
+size_sqft  = np.random.randint(500, 3000, n)       # house size
+bedrooms   = np.random.randint(1, 6, n)            # number of bedrooms
+age_years  = np.random.randint(0, 50, n)           # age of house
+
+# Price formula: size matters most, bedrooms add value, age reduces it
+price = (size_sqft * 150
+         + bedrooms * 8000
+         - age_years * 500
+         + np.random.normal(0, 15000, n))           # add realistic noise
+
+X = np.column_stack([size_sqft, bedrooms, age_years])
+y = price
+
+# ── Split: 80% training, 20% testing ─────────────────────────────────
+# CRITICAL: Never train and test on the same data — that gives fake results.
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# ── Train the model ───────────────────────────────────────────────────
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# ── Evaluate on unseen test data ──────────────────────────────────────
+y_pred = model.predict(X_test)
+mse  = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+r2   = r2_score(y_test, y_pred)
+
+print(f"Root Mean Squared Error: £{rmse:,.0f}")
+print(f"R² Score: {r2:.3f}  (1.0 = perfect, 0.0 = no better than guessing the mean)")
+
+# ── Inspect what the model learned ───────────────────────────────────
+feature_names = ['size_sqft', 'bedrooms', 'age_years']
+for name, coef in zip(feature_names, model.coef_):
+    print(f"  {name}: £{coef:+,.0f} per unit")
+
+# ── Make a prediction on a new house ─────────────────────────────────
+new_house = [[1800, 3, 10]]   # 1800 sqft, 3 beds, 10 years old
+predicted_price = model.predict(new_house)[0]
+print(f"\nPredicted price for new house: £{predicted_price:,.0f}")
+</code></pre>
+
+<h3>Supervised Learning: Classification</h3>
+<p>
+    <strong>Classification</strong> predicts a category rather than a number. <strong>Logistic Regression</strong> (despite the name) is the go-to algorithm for binary classification — it outputs a probability between 0 and 1, then uses a threshold (typically 0.5) to assign a class.
+</p>
+<p>
+    For more complex classification, <strong>Decision Trees</strong> and <strong>Random Forests</strong> are powerful and interpretable alternatives.
+</p>
+
+<h4>Hands-On: Customer Churn Prediction</h4>
+<pre><code>from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+# ── Synthetic customer data ───────────────────────────────────────────
+np.random.seed(0)
+n = 500
+months_active    = np.random.randint(1, 60, n)
+monthly_spend    = np.random.uniform(10, 200, n)
+support_tickets  = np.random.randint(0, 10, n)
+
+# Customers who have been active longer, spend more, and raise fewer
+# tickets are less likely to churn.
+churn_prob = (1 / (1 + np.exp(
+    0.05 * months_active
+    + 0.02 * monthly_spend
+    - 0.3 * support_tickets
+    - 3
+)))
+churned = (np.random.rand(n) < churn_prob).astype(int)
+
+X = np.column_stack([months_active, monthly_spend, support_tickets])
+y = churned
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# ── Train a Random Forest ────────────────────────────────────────────
+# Random Forest builds many decision trees and combines their votes.
+# It handles non-linear relationships and is hard to overfit with
+# reasonable settings.
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf.fit(X_train, y_train)
+
+y_pred = rf.predict(X_test)
+print("=== Random Forest Results ===")
+print(f"Accuracy: {accuracy_score(y_test, y_pred):.1%}")
+print(classification_report(y_test, y_pred,
+                             target_names=['Stayed', 'Churned']))
+
+# ── Feature Importance ───────────────────────────────────────────────
+# Random Forests tell you which features matter most.
+feature_names = ['months_active', 'monthly_spend', 'support_tickets']
+importances = rf.feature_importances_
+for name, imp in zip(feature_names, importances):
+    print(f"  {name}: {imp:.1%} importance")
+</code></pre>
+
+<h3>Model Evaluation: What the Metrics Mean</h3>
+<p>
+    Choosing the right evaluation metric is as important as choosing the right algorithm. Here are the key ones:
+</p>
+<ul>
+    <li><strong>Accuracy</strong> — % of predictions that are correct. Misleading when classes are imbalanced (e.g. 95% accuracy on fraud detection sounds great until you realise 95% of transactions are legitimate).</li>
+    <li><strong>Precision</strong> — of all the times the model said "yes", how often was it right? Use when false positives are costly (e.g. spam filter wrongly blocking a real email).</li>
+    <li><strong>Recall</strong> — of all the actual "yes" cases, how many did the model catch? Use when false negatives are costly (e.g. missing a cancer diagnosis).</li>
+    <li><strong>F1 Score</strong> — the harmonic mean of precision and recall. Use when you need a balance between both.</li>
+    <li><strong>MSE / RMSE</strong> — for regression. RMSE is in the same units as the target, making it more interpretable.</li>
+    <li><strong>R²</strong> — for regression. Proportion of variance explained. 1.0 is perfect; 0.0 means the model is no better than always predicting the mean.</li>
+</ul>
+
+<h3>Overfitting vs Underfitting</h3>
+<p>
+    This is one of the most fundamental concepts in all of machine learning:
+</p>
+<ul>
+    <li><strong>Underfitting</strong> — the model is too simple. It performs poorly on both training and test data. Solution: use a more complex model or add more features.</li>
+    <li><strong>Overfitting</strong> — the model has memorised the training data, including its noise. It performs great on training data but poorly on new, unseen data. Solution: simplify the model, add more data, or use regularisation.</li>
+    <li><strong>Good fit</strong> — the model captures the real patterns without memorising noise. Training and test performance are close to each other.</li>
+</ul>
+
+<div class="info-box">
+    <div class="info-label">How to Detect It</div>
+    <p>Always compare your training score to your test score. If training accuracy = 99% and test accuracy = 72%, you're overfitting. If both are 65%, you're underfitting. You're aiming for both to be high and close together.</p>
+</div>
 print("Original DataFrame:\n", df)
 
 # Fill missing numerical values with the median. This is a common

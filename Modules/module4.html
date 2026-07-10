@@ -1,3 +1,220 @@
+<div class="module-content">
+<h2>Module 4: Natural Language Processing</h2>
+
+<h3>What Is NLP?</h3>
+<p>
+    <strong>Natural Language Processing (NLP)</strong> is the branch of AI that deals with understanding, interpreting, and generating human language. It powers the tools you use every day — ChatGPT, Google Translate, email spam filters, autocomplete on your phone, and sentiment analysis in customer reviews.
+</p>
+<p>
+    The core challenge: computers work with numbers, but language is ambiguous, contextual, and full of nuance. "I saw a bat" means something completely different in a sports shop versus a cave. NLP bridges this gap.
+</p>
+
+<h3>Text Preprocessing Pipeline</h3>
+<p>
+    Before feeding text to any model, you need to clean and normalise it. Raw text from the real world contains noise that will confuse your algorithm. The standard pipeline:
+</p>
+<ol>
+    <li><strong>Lowercasing</strong> — "Python" and "python" should be the same word</li>
+    <li><strong>Tokenisation</strong> — split text into individual words or sub-words</li>
+    <li><strong>Stop word removal</strong> — remove common words like "the", "is", "a" that carry little meaning</li>
+    <li><strong>Stemming / Lemmatisation</strong> — reduce words to their base form</li>
+    <li><strong>Removing punctuation and special characters</strong> — strip symbols that add noise</li>
+</ol>
+
+<div class="info-box">
+    <div class="info-label">Stemming vs Lemmatisation</div>
+    <p><strong>Stemming</strong> is fast but crude — it chops off word endings using simple rules. "Running", "runner", "ran" all become "run" (or sometimes "runn"). <strong>Lemmatisation</strong> uses a real dictionary and grammar rules to return the proper base form. "Better" → "good". Always prefer lemmatisation when accuracy matters.</p>
+</div>
+
+<h4>Hands-On: Text Preprocessing</h4>
+<pre><code>import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+import re
+
+# Download required NLTK data (only needed once)
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
+nltk.download('wordnet', quiet=True)
+nltk.download('punkt_tab', quiet=True)
+
+def preprocess(text, use_lemmatization=True):
+    """Full NLP preprocessing pipeline."""
+
+    # Step 1: Lowercase
+    text = text.lower()
+
+    # Step 2: Remove punctuation and numbers
+    text = re.sub(r'[^a-z\s]', '', text)
+
+    # Step 3: Tokenise — split into individual words
+    tokens = word_tokenize(text)
+
+    # Step 4: Remove stop words
+    stop_words = set(stopwords.words('english'))
+    tokens = [t for t in tokens if t not in stop_words]
+
+    # Step 5: Lemmatise or stem
+    if use_lemmatization:
+        lemmatizer = WordNetLemmatizer()
+        tokens = [lemmatizer.lemmatize(t) for t in tokens]
+    else:
+        stemmer = PorterStemmer()
+        tokens = [stemmer.stem(t) for t in tokens]
+
+    return tokens
+
+# ── Test it ───────────────────────────────────────────────────────────
+samples = [
+    "The quick brown foxes are jumping over the lazy dogs!",
+    "Machine Learning algorithms are learning from historical data.",
+    "She was running faster than the other runners in the competition."
+]
+
+for text in samples:
+    print(f"Original:  {text}")
+    print(f"Processed: {preprocess(text)}")
+    print()
+</code></pre>
+
+<h3>Representing Text as Numbers</h3>
+<p>
+    Once text is cleaned, you need to convert it to numerical form. There are two main approaches, each with different trade-offs:
+</p>
+
+<h4>Bag of Words / TF-IDF</h4>
+<p>
+    <strong>Bag of Words</strong> counts how many times each word appears in a document. It completely ignores word order and context — "the cat sat on the mat" and "the mat sat on the cat" are identical. Simple but surprisingly effective for many tasks.
+</p>
+<p>
+    <strong>TF-IDF</strong> (Term Frequency–Inverse Document Frequency) improves on this by downweighting common words that appear in many documents (like "the") and upweighting rare, distinctive words. It's the standard for text classification and search.
+</p>
+
+<h4>Hands-On: Text Classification with TF-IDF</h4>
+<pre><code>from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+
+# ── Toy dataset: product reviews ─────────────────────────────────────
+reviews = [
+    "This product is absolutely amazing, I love it!",
+    "Terrible quality, broke after one day. Waste of money.",
+    "Works great, exactly as described. Very happy.",
+    "Do not buy this. Complete rubbish.",
+    "Fantastic value for money, highly recommend.",
+    "Stopped working after a week. Very disappointed.",
+    "Best purchase I have made this year.",
+    "Poor build quality, feels cheap and flimsy.",
+    "Exceeded my expectations. Will buy again.",
+    "Not as advertised. Really bad experience.",
+    "Outstanding product, five stars without hesitation.",
+    "Returned it immediately. Awful.",
+    "Super fast delivery and great quality!",
+    "Broke on first use. Terrible.",
+    "Really impressed with how well this works."
+]
+labels = [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1]  # 1=positive, 0=negative
+
+X_train, X_test, y_train, y_test = train_test_split(
+    reviews, labels, test_size=0.3, random_state=42
+)
+
+# ── TF-IDF Vectorisation ──────────────────────────────────────────────
+# Converts each review into a vector of TF-IDF scores.
+# max_features limits vocabulary to the top 1000 words.
+vectorizer = TfidfVectorizer(max_features=1000, stop_words='english')
+X_train_vec = vectorizer.fit_transform(X_train)
+X_test_vec  = vectorizer.transform(X_test)
+
+print(f"Vocabulary size: {len(vectorizer.vocabulary_)}")
+print(f"Feature matrix shape: {X_train_vec.shape}")  # (samples, vocab_size)
+
+# ── Train a Logistic Regression classifier ────────────────────────────
+clf = LogisticRegression(random_state=42)
+clf.fit(X_train_vec, y_train)
+
+y_pred = clf.predict(X_test_vec)
+print("\n=== Classification Report ===")
+print(classification_report(y_test, y_pred,
+                             target_names=['Negative', 'Positive']))
+
+# ── Predict on new text ───────────────────────────────────────────────
+new_reviews = [
+    "This is the best thing I have ever bought.",
+    "Complete waste of money, do not buy."
+]
+new_vec = vectorizer.transform(new_reviews)
+predictions = clf.predict(new_vec)
+for review, pred in zip(new_reviews, predictions):
+    label = "Positive" if pred == 1 else "Negative"
+    print(f"'{review[:40]}...' → {label}")
+</code></pre>
+
+<h3>Word Embeddings</h3>
+<p>
+    TF-IDF treats every word as completely independent. But "king" and "queen" are related; "cat" and "dog" are similar. <strong>Word embeddings</strong> capture these relationships by representing each word as a dense numerical vector in a high-dimensional space where similar words are close together.
+</p>
+<p>
+    The famous example: <code>vector("king") - vector("man") + vector("woman") ≈ vector("queen")</code>. The model has learned gender as a direction in vector space.
+</p>
+<p>
+    <strong>Word2Vec</strong> and <strong>GloVe</strong> are classic embedding models. Modern systems use contextual embeddings from Transformers (see below), where the same word gets a different vector depending on context.
+</p>
+
+<h3>Introduction to Transformers and BERT</h3>
+<p>
+    The <strong>Transformer</strong> architecture (introduced in the 2017 paper "Attention Is All You Need") is the foundation of every modern NLP model — including GPT, BERT, and ChatGPT.
+</p>
+<p>
+    Its key innovation is the <strong>self-attention mechanism</strong>: instead of processing words one by one like older RNN-based models, Transformers look at the entire sentence at once and compute how much each word should "pay attention" to every other word. This captures long-range dependencies naturally.
+</p>
+<p>
+    <strong>BERT</strong> (Bidirectional Encoder Representations from Transformers) pre-trains on billions of words and can be fine-tuned for specific tasks in minutes. It is the backbone of Google Search.
+</p>
+
+<h4>Hands-On: Sentiment Analysis with a Pre-Trained Transformer</h4>
+<pre><code># Install: pip install transformers torch
+# This downloads a small pre-trained sentiment model (~66MB)
+
+from transformers import pipeline
+
+# ── Load a pre-trained sentiment analysis pipeline ────────────────────
+# This uses a fine-tuned DistilBERT model — a smaller, faster BERT.
+# The first run downloads the model weights (~260MB).
+sentiment = pipeline(
+    "sentiment-analysis",
+    model="distilbert-base-uncased-finetuned-sst-2-english"
+)
+
+# ── Analyse some texts ────────────────────────────────────────────────
+texts = [
+    "I absolutely love this course. The explanations are crystal clear!",
+    "This was a complete waste of time. I learned nothing.",
+    "It was okay. Some parts were good, others not so much.",
+    "The deep learning module blew my mind. Highly recommend.",
+    "Confusing explanations and poor examples."
+]
+
+results = sentiment(texts)
+
+for text, result in zip(texts, results):
+    label = result['label']
+    score = result['score']
+    print(f"[{label:8s} {score:.0%}] {text[:55]}...")
+
+# ── Key takeaway ──────────────────────────────────────────────────────
+# You just ran a state-of-the-art NLP model in ~5 lines of code.
+# In industry, this is how most NLP tasks start: find a pre-trained
+# model on HuggingFace, test it, fine-tune if needed.
+# Fine-tuning BERT on your own labelled data takes ~30 minutes on a GPU.
+</code></pre>
+
+<div class="info-box">
+    <div class="info-label">The HuggingFace Ecosystem</div>
+    <p>HuggingFace (<code>huggingface.co</code>) hosts thousands of pre-trained NLP models and datasets. It is the GitHub of machine learning models. In industry, almost all NLP work starts here — knowing how to navigate it is a genuine job skill.</p>
+</div>
 <h2>MODULE 4: NATURAL LANGUAGE PROCESSING</h2>
 <div class="prose text-neon-green max-w-none">
     <h3>Text Preprocessing</h3>

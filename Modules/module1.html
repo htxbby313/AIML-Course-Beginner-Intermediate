@@ -1,3 +1,38 @@
+<div class="module-content">
+<h2>Module 1: AI/ML Foundations</h2>
+
+<h3>What Is Artificial Intelligence?</h3>
+<p>
+    <strong>Artificial Intelligence (AI)</strong> is a broad field of computer science focused on building systems that can perform tasks that normally require human intelligence — things like understanding language, recognising images, making decisions, and learning from experience.
+</p>
+<p>
+    AI is not one single technology. It is a collection of techniques and approaches. You encounter AI every day: when Netflix recommends a show, when your phone unlocks with your face, or when a spam filter catches a phishing email. All of these are AI at work.
+</p>
+
+<div class="info-box">
+    <div class="info-label">Key Insight</div>
+    <p>Think of AI, ML, and Deep Learning as a set of nested circles. <strong>AI</strong> is the outermost circle (the big idea). <strong>Machine Learning</strong> sits inside it (one way to achieve AI). <strong>Deep Learning</strong> sits inside ML (a powerful subset of ML techniques).</p>
+</div>
+
+<h3>Machine Learning (ML)</h3>
+<p>
+    <strong>Machine Learning</strong> is the most widely used approach to building AI today. Instead of a programmer writing explicit rules ("if the email contains the word 'winner', mark it as spam"), an ML system <em>learns</em> the rules itself by examining thousands of examples.
+</p>
+<p>
+    The core idea: <strong>given enough data, an algorithm can discover patterns that a human might never think to code manually</strong>. This is why ML has transformed fields from medicine to finance to entertainment.
+</p>
+
+<h3>The Three Types of Machine Learning</h3>
+
+<h4>1. Supervised Learning</h4>
+<p>
+    The model is trained on a <strong>labelled dataset</strong> — every example has a known correct answer. The model learns to map inputs to outputs by minimising its mistakes.
+</p>
+<ul>
+    <li><strong>Example:</strong> Predicting house prices. Input = size, location, number of rooms. Output = price (a number we already know for past sales).</li>
+    <li><strong>Example:</strong> Email spam detection. Input = email text. Output = "spam" or "not spam".</li>
+    <li><strong>Use when:</strong> You have labelled historical data and want to predict or classify new data.</li>
+</ul>
 <h2>MODULE 1: AI/ML FOUNDATIONS</h2>
 <div class="prose text-neon-green max-w-none">
     <h3>What is AI?</h3>
@@ -34,27 +69,131 @@
         <pre class="jupyter-code"><code>import numpy as np
 import pandas as pd
 
-# Create a Python list of lists to represent a 2x3 matrix.
-matrix_data = [[1, 2, 3], [4, 5, 6]]
+<h4>2. Unsupervised Learning</h4>
+<p>
+    The model is given <strong>unlabelled data</strong> and must find structure on its own — no correct answers are provided.
+</p>
+<ul>
+    <li><strong>Example:</strong> Customer segmentation. Group thousands of customers by purchasing behaviour without being told what the groups should be.</li>
+    <li><strong>Example:</strong> Anomaly detection. Find unusual transactions in a bank's data without knowing in advance what "unusual" looks like.</li>
+    <li><strong>Use when:</strong> You want to discover hidden patterns or structure in your data.</li>
+</ul>
 
-# Convert the Python list into a NumPy array.
-# NumPy arrays are much more efficient for mathematical operations.
-np_array = np.array(matrix_data)
+<h4>3. Reinforcement Learning</h4>
+<p>
+    An <strong>agent</strong> learns by interacting with an <strong>environment</strong>, receiving <strong>rewards</strong> for good actions and penalties for bad ones. Over thousands of trials, it learns an optimal strategy.
+</p>
+<ul>
+    <li><strong>Example:</strong> Training a game-playing AI (like AlphaGo). The agent plays millions of games and learns which moves lead to winning.</li>
+    <li><strong>Example:</strong> Self-driving car navigation — the car gets rewarded for smooth, safe driving and penalised for collisions.</li>
+    <li><strong>Use when:</strong> The problem involves sequential decisions in a dynamic environment.</li>
+</ul>
 
-# The `.shape` attribute tells you the dimensions of the array.
-# In this case, it's 2 rows and 3 columns.
-print("Shape of the array:", np_array.shape)
+<h3>Why Python for AI/ML?</h3>
+<p>
+    Python has become the dominant language for AI and ML for several reasons: it is readable, easy to learn, and has a rich ecosystem of libraries built specifically for data science and machine learning. The three you will use throughout this course are:
+</p>
+<ul>
+    <li><strong>NumPy</strong> — fast numerical computation with arrays and matrices</li>
+    <li><strong>Pandas</strong> — loading, cleaning, and analysing tabular data</li>
+    <li><strong>Scikit-learn</strong> — ready-to-use ML algorithms (covered in Module 2)</li>
+</ul>
 
-# Create a dictionary to hold our sample data.
-data = {'Name': ['Neo', 'Trinity', 'Morpheus'], 'Power Level': [100, 95, 80]}
+<h3>Setting Up Your Environment</h3>
+<p>
+    Before writing any ML code you need a working Python environment. The recommended approach is to use a <strong>virtual environment</strong> so your project's libraries do not conflict with other Python projects on your machine.
+</p>
 
-# Convert the dictionary into a Pandas DataFrame.
-# DataFrames are the standard way to work with tabular data in Python.
+<div class="warning-box">
+    <div class="info-label">Before You Start</div>
+    <p>Make sure Python 3.9+ is installed. You can check by running <code>python --version</code> in your terminal. If you see a version number, you're good. If not, download Python from python.org.</p>
+</div>
+
+<div class="code-block-header" style="border-radius:6px 6px 0 0; border:1px solid #00ff4140; padding:0.5rem 1rem; background:#001a00; font-size:0.75rem; color:#00cc33; display:flex; justify-content:space-between;">
+    <span>terminal</span>
+</div>
+<pre><code># 1. Create a virtual environment
+python -m venv venv
+
+# 2. Activate it
+# On Windows:
+venv\Scripts\activate
+# On Mac/Linux:
+source venv/bin/activate
+
+# 3. Install all required libraries
+pip install numpy pandas scikit-learn tensorflow keras nltk matplotlib</code></pre>
+
+<h4>Hands-On: Your First Data Script</h4>
+<p>
+    Copy this code into a new file called <code>module1_practice.py</code> (or a Jupyter Notebook cell) and run it. Every line is explained with a comment.
+</p>
+
+<pre><code>import numpy as np
+import pandas as pd
+
+# ── NumPy: Fast Numerical Arrays ──────────────────────────────────────
+# Python lists are slow for maths. NumPy arrays are fast.
+# Here we create a 2-row, 3-column array (a matrix).
+matrix = np.array([[1, 2, 3],
+                   [4, 5, 6]])
+
+print("Shape:", matrix.shape)       # (2, 3) — 2 rows, 3 columns
+print("Mean:", matrix.mean())       # 3.5 — average of all values
+print("Doubled:\n", matrix * 2)     # element-wise multiplication
+
+# ── Pandas: Working With Tabular Data ────────────────────────────────
+# Think of a DataFrame as a spreadsheet in Python.
+# Each column is a feature; each row is one data point (observation).
+data = {
+    'name':       ['Alice', 'Bob', 'Carol', 'Dave'],
+    'age':        [28, 34, 22, 45],
+    'salary':     [52000, 78000, 41000, 95000],
+    'department': ['Engineering', 'Marketing', 'Engineering', 'Finance']
+}
 df = pd.DataFrame(data)
 
-print("\nDataFrame:")
+print("\n--- Full DataFrame ---")
 print(df)
+
+print("\n--- Summary Statistics ---")
+print(df[['age', 'salary']].describe())
+
+print("\n--- Average salary by department ---")
+print(df.groupby('department')['salary'].mean())
+
+# ── What this teaches you ────────────────────────────────────────────
+# In every real ML project, you will:
+# 1. Load data into a DataFrame (from a CSV, database, API, etc.)
+# 2. Explore it with .describe(), .groupby(), .head()
+# 3. Clean it (handle missing values, fix types)
+# 4. Feed processed arrays into an ML model
+# Steps 2 & 3 are covered in Module 2.
 </code></pre>
+
+<h4>Understanding the Output</h4>
+<p>
+    When you run this script you will see the DataFrame printed as a table, a statistical summary showing min/max/mean for numerical columns, and the average salary split by department. This kind of exploration — called <strong>Exploratory Data Analysis (EDA)</strong> — is the very first thing a data scientist or ML engineer does with any new dataset.
+</p>
+
+<h3>The ML Workflow: The Big Picture</h3>
+<p>
+    Before jumping into algorithms, it is worth understanding the end-to-end process you will follow in every module:
+</p>
+<ol>
+    <li><strong>Define the problem</strong> — what are you predicting? Is it a number (regression) or a category (classification)?</li>
+    <li><strong>Collect and explore data</strong> — load it, look at it, understand its shape and quirks</li>
+    <li><strong>Preprocess</strong> — clean missing values, encode categories, scale numbers (Module 2)</li>
+    <li><strong>Choose and train a model</strong> — pick an algorithm, fit it to your training data</li>
+    <li><strong>Evaluate</strong> — measure performance on data the model has never seen</li>
+    <li><strong>Improve and iterate</strong> — tune, add features, try different algorithms</li>
+    <li><strong>Deploy</strong> — make the model available to real users (Module 6)</li>
+</ol>
+
+<div class="info-box">
+    <div class="info-label">Career Tip</div>
+    <p>In job interviews, being able to describe this workflow clearly — even without memorising specific algorithms — signals that you understand how ML projects actually work in practice. Interviewers love candidates who see the whole pipeline, not just individual steps.</p>
+</div>
     </div>
     <p><strong>Checkpoint before the quiz:</strong> If you can explain why arrays are useful for numbers and DataFrames are useful for tables, you understand the purpose of this setup code.</p>
 
