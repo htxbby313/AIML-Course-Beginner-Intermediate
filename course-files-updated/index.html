@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI & ML Mastery Course — Go From Zero to Job-Ready</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Gumroad overlay script — required for the buy button -->
+    <script src="https://gumroad.com/js/gumroad.js"></script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='black'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-family='monospace' font-size='25' fill='%2300ff41'%3EAI%3C/text%3E%3C/svg%3E">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            margin: 0;
+            padding: 0;
+        }
+        .neon { color: #00ff41; }
+        .neon-dim { color: #00cc33; }
+        .neon-text-shadow { text-shadow: 0 0 12px #00ff41, 0 0 5px #00ff41; }
+        .neon-border { border-color: #00ff41; }
+        .bg-dark { background-color: #0d1117; }
+        .bg-card { background-color: #0f1f0f; }
+        .bg-darker { background-color: #080d08; }
+
+        /* NAV */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: rgba(13, 17, 23, 0.95);
+            border-bottom: 1px solid #00ff4130;
+            backdrop-filter: blur(8px);
+        }
+
+        /* HERO */
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1.15;
+            color: #00ff41;
+            text-shadow: 0 0 20px #00ff41, 0 0 8px #00ff41;
+        }
+        .hero-sub {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: #8b949e;
+            line-height: 1.7;
+        }
+        .tag {
+            display: inline-block;
+            background: #001a00;
+            color: #00ff41;
+            border: 1px solid #00ff4150;
+            border-radius: 4px;
+            padding: 2px 10px;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* CTA BUTTON */
+        .btn-primary {
+            display: inline-block;
+            background-color: #00ff41;
+            color: #0d1117;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+            padding: 1rem 2.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            box-shadow: 0 0 20px #00ff4160;
+        }
+        .btn-primary:hover {
+            background-color: #00e639;
+            box-shadow: 0 0 35px #00ff4180;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            display: inline-block;
+            background: transparent;
+            color: #00ff41;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 0.05em;
+            padding: 0.9rem 2.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            border: 2px solid #00ff41;
+            transition: all 0.2s;
+            color: #00ff41;
+            padding: 1.5rem;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1180px;
+            background: rgba(0, 24, 7, 0.92) !important;
+            padding: 1.25rem !important;
+        }
+        .text-neon-green { color: #00ff41; }
+        .bg-matrix-green { background-color: #004d00; }
+        .border-neon-green { border-color: #00ff41; }
+        .bg-terminal-code { background-color: #001a00; }
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background-color: #00ff41;
+            box-shadow: 0 0 10px #00ff41, 0 0 5px #00ff41;
+            transition: width 0.5s ease-in-out;
+            z-index: 50;
+        }
+        .quiz-option {
+            display: block;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            line-height: 1.5;
+            border: 1px solid rgba(0, 255, 65, 0.35);
+            color: #d7ffe0;
+            background: #101820;
+            min-height: 48px;
+        }
+        .quiz-option:hover {
+            transform: scale(1.01);
+            box-shadow: 0 0 5px #00ff41;
+        }
+        .quiz-option.selected-answer {
+            color: #ffffff;
+            background: #006600 !important;
+            border-color: #00ff41;
+            box-shadow: 0 0 12px rgba(0, 255, 65, 0.3);
+        }
+        .explanation {
+            font-size: 0.875rem;
+            color: #00e63c;
+        }
+        .correct-answer { background-color: #008000 !important; }
+        .incorrect-answer { background-color: #b30000 !important; }
+        pre {
+            border: 1px solid #00ff41;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            white-space: pre;
+            overflow-x: auto;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+            font-size: 0.875rem;
+            line-height: 1.4;
+            background: #020806;
+        }
+        .course-title {
+            font-size: clamp(1.75rem, 4vw, 2.55rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #00ff41;
+            text-shadow: 0 0 8px rgba(0, 255, 65, 0.75);
+            line-height: 1.2;
+        }
+        #course-content-container > .page-label {
+            margin-top: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        #course-content-container > h2 {
+            margin: 0.65rem 0 1rem;
+            font-size: clamp(1rem, 2vw, 1.28rem);
+            color: #00ff41;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .module-content h2 {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #00ff41;
+            color: #00ff41;
+            text-shadow: 0 0 7px rgba(0, 255, 65, 0.65);
+        }
+        .module-content h3 {
+            font-size: clamp(1.25rem, 3vw, 1.65rem);
+            font-style: normal;
+            font-weight: 700;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: #00e63c;
+            text-shadow: 0 0 4px rgba(0, 230, 60, 0.45);
+        }
+        .module-content h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #00e63c;
+        }
+        .module-content p {
+            margin-bottom: 1.25rem;
+            line-height: 1.8;
+            color: #d7ffe0;
+        }
+        .module-content strong {
+            color: #ffffff;
+        }
+        .course-page {
+            border: 1px solid rgba(0, 255, 65, 0.4);
+            border-radius: 0.75rem;
+            background: rgba(0, 10, 4, 0.82);
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 0 18px rgba(0, 255, 65, 0.12);
+        }
+        .page-label {
+            display: inline-block;
+            margin-bottom: 0.8rem;
+            padding: 0.25rem 0.55rem;
+            border: 1px solid #00ff41;
+            border-radius: 999px;
+            color: #001a00;
+            background: #00ff41;
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .lesson-page {
+            display: none;
+            min-height: 420px;
+        }
+        .lesson-page.active-page {
+            display: block;
+        }
+        .lesson-pager {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin: 0.75rem 0 1rem;
+            padding: 0.75rem;
+            border: 1px solid rgba(0, 255, 65, 0.35);
+            border-radius: 0.75rem;
+            background: rgba(0, 0, 0, 0.28);
+        }
+        .lesson-pager-status {
+            color: #d7ffe0;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        .lesson-pager-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .code-workspace {
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 1px dashed rgba(0, 255, 65, 0.55);
+            border-radius: 0.75rem;
+            background: rgba(0, 0, 0, 0.35);
+        }
+        .code-workspace label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+            font-weight: 700;
+        }
+        .practice-editor {
+            width: 100%;
+            min-height: 180px;
+            padding: 1rem;
+            border: 1px solid rgba(0, 255, 65, 0.5);
+            border-radius: 0.5rem;
+            color: #d7ffe0;
+            background: #020806;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.55;
+            white-space: pre;
+            overflow: auto;
+            resize: vertical;
+        }
+        .workspace-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+        .workspace-note {
+            margin-top: 0.75rem;
+            margin-bottom: 0;
+            color: #9af7aa;
+            font-size: 0.9rem;
+        }
+        .code-output {
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 1px solid rgba(0, 255, 65, 0.35);
+            border-radius: 0.5rem;
+            background: #020806;
+            color: #d7ffe0;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            font-size: 0.88rem;
+            line-height: 1.55;
+        }
+        .code-output.success {
+            border-color: #00ff41;
+            box-shadow: 0 0 12px rgba(0, 255, 65, 0.18);
+        }
+        .code-output.error {
+            border-color: #ff5c5c;
+            color: #ffd6d6;
+            box-shadow: 0 0 12px rgba(255, 92, 92, 0.16);
+        }
+        .code-output.loading {
+            border-color: #9af7aa;
+            color: #9af7aa;
+        }
+        .btn-secondary:hover {
+            background: #00ff4115;
+            box-shadow: 0 0 15px #00ff4140;
+        }
+
+        /* CARDS */
+        .feature-card {
+            background: #0f1f0f;
+            border: 1px solid #00ff4130;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        .jupyter-code {
+            max-height: 180px;
+            overflow: auto;
+        }
+        .quiz-container {
+            border: 1px solid #00ff41;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            background: rgba(0, 10, 4, 0.92);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+        }
+        .feature-card:hover {
+            border-color: #00ff4170;
+            box-shadow: 0 0 20px #00ff4120;
+        }
+        .module-card {
+            background: #080d08;
+            border: 1px solid #00ff4120;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .module-card:hover { border-color: #00ff4150; }
+        .module-num {
+            background: #001a00;
+            color: #00ff41;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid #00ff4120;
+        }
+
+        /* ACCORDION */
+        .accordion-item { border-bottom: 1px solid #00ff4120; }
+        .accordion-trigger {
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            color: #c9d1d9;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1rem;
+            padding: 1.25rem 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion-trigger:hover { color: #00ff41; }
+        .accordion-content { display: none; padding-bottom: 1rem; color: #8b949e; line-height: 1.7; }
+        .accordion-content.open { display: block; }
+        .accordion-arrow { transition: transform 0.2s; font-size: 0.9rem; color: #00ff41; }
+        .accordion-arrow.open { transform: rotate(180deg); }
+
+        /* DIVIDER */
+        .neon-divider {
+            border: none;
+            border-top: 1px solid #00ff4125;
+            margin: 0;
+        }
+
+        /* TERMINAL BLOCK */
+        .terminal {
+            background: #010a01;
+            border: 1px solid #00ff4140;
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            box-shadow: 0 0 20px #00ff4110;
+        }
+        .terminal-line { color: #8b949e; }
+        .terminal-line .prompt { color: #00ff41; }
+        .terminal-line .output { color: #c9d1d9; }
+
+        /* CHECKLIST */
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: #c9d1d9;
+        }
+        .check-icon { color: #00ff41; flex-shrink: 0; margin-top: 2px; }
+
+        /* PRICE CARD */
+        .price-card {
+            background: #0f1f0f;
+            border: 2px solid #00ff41;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 0 40px #00ff4130;
+            max-width: 480px;
+            margin: 0 auto;
+        .action-button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .module-view { display: none; }
+        .module-view.active { display: block; }
+        .next-button-locked {
+            pointer-events: none;
+            opacity: 0.4;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        .completion-message {
+            border: 1px solid #00ff41;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 0.75rem;
+            background-color: #001a00;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+        }
+        .module-view::-webkit-scrollbar {
+            display: none;
+            width: 0 !important;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0d1117; }
+        ::-webkit-scrollbar-thumb { background: #00ff4140; border-radius: 3px; }
+
+        /* GUMROAD BUTTON OVERRIDE */
+        .gumroad-button {
+            background-color: #00ff41 !important;
+            color: #0d1117 !important;
+            font-family: 'Roboto Mono', monospace !important;
+            font-weight: 700 !important;
+            font-size: 1.1rem !important;
+            letter-spacing: 0.05em !important;
+            padding: 1rem 2.5rem !important;
+            border-radius: 6px !important;
+            box-shadow: 0 0 20px #00ff4160 !important;
+        }
+        @media (max-width: 720px) {
+            body { padding: 0.75rem; }
+            .container { padding: 1rem !important; }
+            .course-title { margin-bottom: 1.25rem; }
+            .course-page { padding: 1rem; }
+            .lesson-page { min-height: 0; }
+            .lesson-pager,
+            .lesson-pager-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .workspace-actions .action-button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ NAV ═══════════════════════════════ -->
+<nav>
+    <div style="max-width:1200px; margin:0 auto; padding:0 1.5rem; display:flex; justify-content:space-between; align-items:center; height:56px;">
+        <span class="neon" style="font-weight:700; font-size:0.95rem; letter-spacing:0.08em;">AI&ML.MASTERY</span>
+        <div style="display:flex; gap:1rem; align-items:center;">
+            <a href="#curriculum" style="color:#8b949e; text-decoration:none; font-size:0.85rem; transition:color 0.2s;" onmouseover="this.style.color='#00ff41'" onmouseout="this.style.color='#8b949e'">Curriculum</a>
+            <a href="#pricing" style="color:#8b949e; text-decoration:none; font-size:0.85rem; transition:color 0.2s;" onmouseover="this.style.color='#00ff41'" onmouseout="this.style.color='#8b949e'">Pricing</a>
+            <a href="course.html?preview=1" class="btn-secondary" style="padding:0.4rem 1rem; font-size:0.8rem;">Preview Course</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<section style="padding: 6rem 1.5rem 5rem; max-width:1100px; margin:0 auto;">
+    <div style="max-width:720px; margin:0 auto; text-align:center;">
+        <span class="tag" style="margin-bottom:1.5rem; display:inline-block;">6 Modules · Beginner Friendly · Hands-On Code</span>
+        <h1 class="hero-title" style="margin:1rem 0 1.5rem;">Break Into AI &amp; Machine Learning — No CS Degree Required</h1>
+        <p class="hero-sub" style="margin-bottom:2.5rem;">
+            A complete, project-driven course that takes you from zero Python experience to building real AI systems — the skills companies are hiring for right now.
+        </p>
+        <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+            <a class="gumroad-button" href="https://htxbby313.gumroad.com/l/AI-Machine-Learning-Course" data-gumroad-overlay="true">Enroll Now</a>
+            <a href="course.html?preview=1" class="btn-secondary">Preview Free →</a>
+        </div>
+        <p style="margin-top:1.25rem; color:#8b949e; font-size:0.8rem;">One-time payment · Lifetime access · Instant delivery</p>
+    </div>
+
+    <!-- Terminal teaser -->
+    <div class="terminal" style="max-width:680px; margin:4rem auto 0;">
+        <div style="display:flex; gap:6px; margin-bottom:1rem;">
+            <div style="width:12px;height:12px;border-radius:50%;background:#ff5f57;"></div>
+            <div style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;"></div>
+            <div style="width:12px;height:12px;border-radius:50%;background:#28c840;"></div>
+        </div>
+        <div class="terminal-line"><span class="prompt">$</span> <span class="output">python predict_salary.py</span></div>
+        <div class="terminal-line" style="color:#8b949e; padding-left:1rem;">> Loading model... Done ✓</div>
+        <div class="terminal-line" style="color:#8b949e; padding-left:1rem;">> Input years_experience=2, degree='none'</div>
+        <div class="terminal-line" style="color:#00ff41; padding-left:1rem;">> Predicted salary: $78,400</div>
+        <div class="terminal-line" style="color:#8b949e; padding-left:1rem;">> Model accuracy: 91.3%</div>
+        <div class="terminal-line" style="margin-top:0.75rem;"><span class="prompt">$</span> <span style="color:#00ff41;">█</span></div>
+    </div>
+</section>
+
+<hr class="neon-divider">
+
+<!-- ═══════════════════════════════ PAIN POINTS ═══════════════════════════════ -->
+<section style="padding:5rem 1.5rem; max-width:1100px; margin:0 auto;">
+    <h2 style="text-align:center; color:#00ff41; font-size:1.75rem; font-weight:700; margin-bottom:1rem;">Sound Familiar?</h2>
+    <p style="text-align:center; color:#8b949e; margin-bottom:3rem; max-width:560px; margin-left:auto; margin-right:auto; line-height:1.7;">
+        Most people who want to get into AI hit the same walls.
+    </p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem;">
+        <div class="feature-card">
+            <div style="color:#ff6b6b; font-size:1.5rem; margin-bottom:0.75rem;">⚠</div>
+            <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.5rem;">Tutorials that go nowhere</h3>
+            <p style="color:#8b949e; font-size:0.875rem; margin:0; line-height:1.6;">You finish a YouTube series and still don't know how to build something real or explain it in an interview.</p>
+        </div>
+        <div class="feature-card">
+            <div style="color:#ff6b6b; font-size:1.5rem; margin-bottom:0.75rem;">⚠</div>
+            <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.5rem;">Math-heavy courses that assume too much</h3>
+            <p style="color:#8b949e; font-size:0.875rem; margin:0; line-height:1.6;">Most courses jump straight into calculus and linear algebra before you've written a single line of ML code.</p>
+        </div>
+        <div class="feature-card">
+            <div style="color:#ff6b6b; font-size:1.5rem; margin-bottom:0.75rem;">⚠</div>
+            <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.5rem;">No project to show employers</h3>
+            <p style="color:#8b949e; font-size:0.875rem; margin:0; line-height:1.6;">Without a real portfolio project, your CV looks the same as everyone else who "completed a course."</p>
+        </div>
+    </div>
+</section>
+
+<hr class="neon-divider">
+
+<!-- ═══════════════════════════════ WHAT YOU GET ═══════════════════════════════ -->
+<section style="padding:5rem 1.5rem; max-width:1100px; margin:0 auto;">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center;">
+        <div>
+            <span class="tag" style="margin-bottom:1rem; display:inline-block;">What's Inside</span>
+            <h2 style="color:#00ff41; font-size:1.75rem; font-weight:700; margin:0.5rem 0 1.5rem; line-height:1.3;">Everything You Need. Nothing You Don't.</h2>
+            <div>
+                <div class="check-item"><span class="check-icon">▶</span><span><strong style="color:#c9d1d9;">6 progressive modules</strong> — each builds on the last, from basic Python to deploying a real ML model</span></div>
+                <div class="check-item"><span class="check-icon">▶</span><span><strong style="color:#c9d1d9;">Hands-on code in every module</strong> — copy-ready Python notebooks you run yourself</span></div>
+                <div class="check-item"><span class="check-icon">▶</span><span><strong style="color:#c9d1d9;">Quizzes with instant feedback</strong> — must score 80%+ to unlock the next module</span></div>
+                <div class="check-item"><span class="check-icon">▶</span><span><strong style="color:#c9d1d9;">Capstone project</strong> — build a Financial News Sentiment Dashboard end-to-end</span></div>
+                <div class="check-item"><span class="check-icon">▶</span><span><strong style="color:#c9d1d9;">Certificate of completion</strong> — shareable PDF to attach to your CV and LinkedIn</span></div>
+                <div class="check-item"><span class="check-icon">▶</span><span><strong style="color:#c9d1d9;">Lifetime access</strong> — including all future updates at no extra cost</span></div>
+            </div>
+        </div>
+        <div>
+            <div class="terminal">
+                <div style="display:flex; gap:6px; margin-bottom:1rem;">
+                    <div style="width:12px;height:12px;border-radius:50%;background:#ff5f57;"></div>
+                    <div style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;"></div>
+                    <div style="width:12px;height:12px;border-radius:50%;background:#28c840;"></div>
+                </div>
+                <div style="color:#8b949e; font-size:0.8rem; margin-bottom:0.5rem;"># Module 3: Deep Learning</div>
+                <div style="color:#c9d1d9; font-size:0.85rem; line-height:1.8;">
+                    <span style="color:#ff9800;">from</span> tensorflow.keras <span style="color:#ff9800;">import</span> Sequential<br>
+                    <span style="color:#ff9800;">from</span> tensorflow.keras.layers <span style="color:#ff9800;">import</span> Dense<br><br>
+                    model = Sequential([<br>
+                    &nbsp;&nbsp;Dense(<span style="color:#00e676;">64</span>, activation=<span style="color:#69f0ae;">'relu'</span>),<br>
+                    &nbsp;&nbsp;Dense(<span style="color:#00e676;">32</span>, activation=<span style="color:#69f0ae;">'relu'</span>),<br>
+                    &nbsp;&nbsp;Dense(<span style="color:#00e676;">1</span>, activation=<span style="color:#69f0ae;">'sigmoid'</span>)<br>
+                    ])<br><br>
+                    <span style="color:#8b949e;"># 94.2% accuracy on test set</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="neon-divider">
+<!-- ═══════════════════════════════ CURRICULUM ═══════════════════════════════ -->
+<section id="curriculum" style="padding:5rem 1.5rem; max-width:1100px; margin:0 auto;">
+    <span class="tag" style="display:block; text-align:center; margin-bottom:1rem;">The Curriculum</span>
+    <h2 style="text-align:center; color:#00ff41; font-size:1.75rem; font-weight:700; margin-bottom:0.75rem;">6 Modules. One Complete Skillset.</h2>
+    <p style="text-align:center; color:#8b949e; margin-bottom:3rem; max-width:560px; margin-left:auto; margin-right:auto; line-height:1.7;">
+        Each module ends with a quiz. Pass at 80%+ to unlock the next — no skipping ahead, no gaps in your knowledge.
+    </p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:1.25rem;">
+        <div class="module-card">
+            <div class="module-num">MODULE 01 — Foundations</div>
+            <div style="padding:1.25rem;">
+                <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.75rem;">AI/ML Foundations</h3>
+                <ul style="color:#8b949e; font-size:0.875rem; margin:0; padding-left:1.25rem; line-height:1.9;">
+                    <li>What is AI, ML & Deep Learning</li>
+                    <li>Supervised, Unsupervised & Reinforcement Learning</li>
+                    <li>Python, NumPy & Pandas setup</li>
+                    <li>Your first data analysis script</li>
+                </ul>
+            </div>
+        </div>
+        <div class="module-card">
+            <div class="module-num">MODULE 02 — Core ML</div>
+            <div style="padding:1.25rem;">
+                <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.75rem;">Core Machine Learning</h3>
+                <ul style="color:#8b949e; font-size:0.875rem; margin:0; padding-left:1.25rem; line-height:1.9;">
+                    <li>Data cleaning & preprocessing</li>
+                    <li>Linear & Logistic Regression</li>
+                    <li>Decision Trees & Random Forests</li>
+                    <li>Model evaluation (accuracy, MSE, F1)</li>
+                </ul>
+            </div>
+        </div>
+        <div class="module-card">
+            <div class="module-num">MODULE 03 — Deep Learning</div>
+            <div style="padding:1.25rem;">
+                <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.75rem;">Neural Networks & Deep Learning</h3>
+                <ul style="color:#8b949e; font-size:0.875rem; margin:0; padding-left:1.25rem; line-height:1.9;">
+                    <li>How neural networks actually work</li>
+                    <li>Building networks with Keras/TensorFlow</li>
+                    <li>Convolutional Neural Networks (CNNs)</li>
+                    <li>Transfer learning with pre-trained models</li>
+                </ul>
+            </div>
+        </div>
+        <div class="module-card">
+            <div class="module-num">MODULE 04 — NLP</div>
+            <div style="padding:1.25rem;">
+                <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.75rem;">Natural Language Processing</h3>
+                <ul style="color:#8b949e; font-size:0.875rem; margin:0; padding-left:1.25rem; line-height:1.9;">
+                    <li>Tokenization, stemming & lemmatization</li>
+                    <li>Word embeddings (Word2Vec)</li>
+                    <li>Sentiment analysis</li>
+                    <li>Introduction to Transformers & BERT</li>
+                </ul>
+            </div>
+        </div>
+        <div class="module-card">
+            <div class="module-num">MODULE 05 — Computer Vision</div>
+            <div style="padding:1.25rem;">
+                <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.75rem;">Computer Vision</h3>
+                <ul style="color:#8b949e; font-size:0.875rem; margin:0; padding-left:1.25rem; line-height:1.9;">
+                    <li>Images as data: pixels & channels</li>
+                    <li>Image preprocessing & augmentation</li>
+                    <li>CNN-based image classification</li>
+                    <li>Object detection overview (YOLO)</li>
+                </ul>
+            </div>
+        </div>
+        <div class="module-card">
+            <div class="module-num">MODULE 06 — Advanced + Capstone</div>
+            <div style="padding:1.25rem;">
+                <h3 style="color:#c9d1d9; font-size:1rem; margin:0 0 0.75rem;">Advanced Topics & Capstone</h3>
+                <ul style="color:#8b949e; font-size:0.875rem; margin:0; padding-left:1.25rem; line-height:1.9;">
+                    <li>Reinforcement Learning & GANs</li>
+                    <li>MLOps & model deployment</li>
+                    <li>Generative AI & LLMs explained</li>
+                    <li>Capstone: Financial Sentiment Dashboard</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="neon-divider">
+
+<!-- ═══════════════════════════════ WHO THIS IS FOR ═══════════════════════════════ -->
+<section style="padding:5rem 1.5rem; max-width:1100px; margin:0 auto;">
+    <h2 style="text-align:center; color:#00ff41; font-size:1.75rem; font-weight:700; margin-bottom:3rem;">This Course is For You If...</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; max-width:800px; margin:0 auto;">
+        <div>
+            <h3 style="color:#00ff41; font-size:0.9rem; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1.25rem;">Good Fit ✓</h3>
+            <div class="check-item"><span class="check-icon">✓</span><span>You're changing careers and want to break into tech / AI</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>You know basic Python or are willing to pick it up</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>You want practical code, not just theory</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>You want a portfolio project to show employers</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>You learn best by doing, not watching lectures</span></div>
+        </div>
+        <div>
+            <h3 style="color:#ff6b6b; font-size:0.9rem; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1.25rem;">Not the Right Fit ✗</h3>
+            <div class="check-item"><span style="color:#ff6b6b; flex-shrink:0; margin-top:2px;">✗</span><span>You need a PhD-level mathematical treatment</span></div>
+            <div class="check-item"><span style="color:#ff6b6b; flex-shrink:0; margin-top:2px;">✗</span><span>You're an experienced ML engineer looking for advanced research techniques</span></div>
+            <div class="check-item"><span style="color:#ff6b6b; flex-shrink:0; margin-top:2px;">✗</span><span>You want someone else to do the coding for you</span></div>
+        </div>
+    </div>
+</section>
+
+<hr class="neon-divider">
+
+<!-- ═══════════════════════════════ PRICING ═══════════════════════════════ -->
+<section id="pricing" style="padding:5rem 1.5rem; max-width:1100px; margin:0 auto;">
+    <h2 style="text-align:center; color:#00ff41; font-size:1.75rem; font-weight:700; margin-bottom:0.75rem;">One Price. Everything Included.</h2>
+    <p style="text-align:center; color:#8b949e; margin-bottom:3rem;">No subscriptions. No upsells. No drip-fed content.</p>
+    <div class="price-card">
+        <div style="text-align:center; margin-bottom:2rem;">
+            <div class="tag" style="margin-bottom:1rem;">Full Course Access</div>
+            <!-- Update this price when you set it in Gumroad -->
+            <div style="font-size:3rem; font-weight:700; color:#00ff41; text-shadow:0 0 15px #00ff41; line-height:1;">$49</div>
+            <div style="color:#8b949e; font-size:0.85rem; margin-top:0.5rem;">one-time · no recurring fees</div>
+        </div>
+
+        <div style="margin-bottom:2rem;">
+            <div class="check-item"><span class="check-icon">✓</span><span>All 6 modules with expanded content</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>6 quizzes with detailed answer explanations</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>All Python code notebooks (copy & run instantly)</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>Capstone project: Financial Sentiment Dashboard</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>Downloadable Certificate of Completion</span></div>
+            <div class="check-item"><span class="check-icon">✓</span><span>Lifetime access + all future updates</span></div>
+        </div>
+
+        <div style="text-align:center;">
+            <a class="gumroad-button" href="https://htxbby313.gumroad.com/l/AI-Machine-Learning-Course" data-gumroad-overlay="true" style="width:100%; display:block; text-align:center; text-decoration:none;">
+                Enroll Now — $49
+            </a>
+            <p style="color:#8b949e; font-size:0.8rem; margin-top:1rem;">Secure checkout via Gumroad · Instant access</p>
+        </div>
+    </div>
+</section>
+
+<hr class="neon-divider">
+
+<!-- ═══════════════════════════════ FAQ ═══════════════════════════════ -->
+<section style="padding:5rem 1.5rem; max-width:760px; margin:0 auto;">
+    <h2 style="text-align:center; color:#00ff41; font-size:1.75rem; font-weight:700; margin-bottom:3rem;">Frequently Asked Questions</h2>
+
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            Do I need a maths or CS degree?
+            <span class="accordion-arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+            No. This course is designed for complete beginners. We explain the intuition behind every concept before touching code. You don't need a degree — just curiosity and a willingness to practise.
+        </div>
+    </div>
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            What Python knowledge do I need?
+            <span class="accordion-arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+            Basic Python is helpful — things like variables, loops, and functions. If you're completely new to Python, Module 1 includes a setup guide and links to free resources to get you up to speed in a weekend.
+        </div>
+    </div>
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            How does the course work technically?
+            <span class="accordion-arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+            After purchase you get access to the course instantly. It runs in your browser — no app to install. Code examples are copy-ready; you run them in a local Jupyter Notebook or Google Colab (free). Your progress is saved automatically.
+        </div>
+    </div>
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            What's in the Capstone project?
+            <span class="accordion-arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+            You'll build a Financial News Sentiment Dashboard from scratch: scraping headlines, cleaning text, training a sentiment classifier, and displaying results. It's a real, deployable project you can put on your CV and GitHub.
+        </div>
+    </div>
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            Is there a refund policy?
+            <span class="accordion-arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+            Yes. Gumroad offers a 30-day refund policy. If you're not satisfied for any reason, contact support within 30 days for a full refund — no questions asked.
+        </div>
+    </div>
+    <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+            Will this get me a job?
+            <span class="accordion-arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+            This course gives you the practical foundation and a portfolio project that entry-level AI/ML roles require. You'll still need to apply and interview, but you'll have the skills and evidence to back it up.
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ FINAL CTA ═══════════════════════════════ -->
+<section style="padding:5rem 1.5rem; background:#0f1f0f; border-top:1px solid #00ff4125; border-bottom:1px solid #00ff4125;">
+    <div style="max-width:700px; margin:0 auto; text-align:center;">
+        <h2 class="hero-title" style="font-size:clamp(1.5rem, 4vw, 2.5rem); margin-bottom:1.25rem;">Start Building. Start Earning.</h2>
+        <p style="color:#8b949e; margin-bottom:2.5rem; line-height:1.7;">
+            The AI job market is growing fast. The people who land those roles are the ones who started learning today.
+        </p>
+        <a class="gumroad-button" href="https://htxbby313.gumroad.com/l/AI-Machine-Learning-Course" data-gumroad-overlay="true">
+            Enroll Now — $49
+        </a>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer style="padding:2rem 1.5rem; text-align:center; color:#8b949e; font-size:0.8rem; border-top:1px solid #00ff4115;">
+    <p style="margin:0;">AI &amp; ML Mastery Course · Sold via <a href="https://gumroad.com" style="color:#00ff41; text-decoration:none;">Gumroad</a> · All rights reserved</p>
+</footer>
+
+<script>
+    function toggleAccordion(btn) {
+        const content = btn.nextElementSibling;
+        const arrow = btn.querySelector('.accordion-arrow');
+        const isOpen = content.classList.contains('open');
+        // Close all
+        document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('open'));
+        document.querySelectorAll('.accordion-arrow').forEach(a => a.classList.remove('open'));
+        // Open clicked (if it was closed)
+        if (!isOpen) {
+            content.classList.add('open');
+            arrow.classList.add('open');
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,525 @@
+<div class="module-content">
+<h2>Module 6: Advanced Topics &amp; Capstone</h2>
+
+<h3>Reinforcement Learning</h3>
+<p>
+    <strong>Reinforcement Learning (RL)</strong> is fundamentally different from supervised and unsupervised learning. There is no labelled dataset. Instead, an <strong>agent</strong> learns by taking actions in an <strong>environment</strong> and receiving <strong>rewards</strong> (positive) or <strong>penalties</strong> (negative) as feedback.
+</p>
+<p>
+    Over thousands — or millions — of trials, the agent learns a <strong>policy</strong>: a strategy that maps each situation (state) to the best action. This is how AlphaGo beat the world champion, how OpenAI Five beat professional Dota 2 players, and how robotic arms learn to pick up objects.
+</p>
+<ul>
+    <li><strong>Agent</strong> — the learner/decision-maker (the AI)</li>
+    <li><strong>Environment</strong> — the world the agent interacts with (a game, a robot's physical surroundings)</li>
+    <li><strong>State</strong> — the agent's current observation of the environment</li>
+    <li><strong>Action</strong> — what the agent can do (move left, press a button, turn a joint)</li>
+    <li><strong>Reward</strong> — the signal that tells the agent if it did something good or bad</li>
+    <li><strong>Policy</strong> — the strategy: given a state, what action to take</li>
+</ul>
+
+<h4>Reference: Q-Learning on CartPole</h4>
+<p class="sandbox-hint">Requires the gymnasium package, which isn't available in the browser sandbox — run this in Colab or Jupyter.</p>
+<pre data-lang="python"><code># Install: pip install gymnasium
+import gymnasium as gym
+import numpy as np
+
+# ── CartPole: balance a pole on a moving cart ─────────────────────────
+# State: [cart position, cart velocity, pole angle, pole angular velocity]
+# Actions: push cart LEFT (0) or RIGHT (1)
+# Reward: +1 for every timestep the pole stays upright
+# Episode ends when pole falls or cart goes out of bounds
+
+env = gym.make('CartPole-v1')
+print(f"State space:  {env.observation_space}")
+print(f"Action space: {env.action_space}")  # Discrete(2) → 0 or 1
+
+# ── Simple random policy (baseline) ──────────────────────────────────
+# Before training, let's see how long a random agent survives.
+total_rewards = []
+for episode in range(20):
+    state, _ = env.reset()
+    total_reward = 0
+    for step in range(500):
+        action = env.action_space.sample()  # random action
+        state, reward, terminated, truncated, _ = env.step(action)
+        total_reward += reward
+        if terminated or truncated:
+            break
+    total_rewards.append(total_reward)
+
+print(f"\nRandom policy avg survival: {np.mean(total_rewards):.1f} steps")
+print(f"(Max possible: 500 steps)")
+
+# ── Q-Learning implementation ─────────────────────────────────────────
+# Q-Learning learns a table: Q[state][action] = expected future reward
+# Problem: CartPole has continuous states, so we discretise them.
+
+def discretise(state, bins=10):
+    """Convert continuous state to discrete bin indices."""
+    bounds_low  = [-4.8, -4.0, -0.418, -4.0]
+    bounds_high = [ 4.8,  4.0,  0.418,  4.0]
+    indices = []
+    for i, (val, lo, hi) in enumerate(zip(state, bounds_low, bounds_high)):
+        idx = int((val - lo) / (hi - lo) * bins)
+        idx = max(0, min(bins - 1, idx))
+        indices.append(idx)
+    return tuple(indices)
+
+# Q-table: (10^4 states) × 2 actions
+Q = np.zeros([10, 10, 10, 10, 2])
+
+alpha   = 0.1    # learning rate: how much to update Q on each step
+gamma   = 0.99   # discount factor: how much future rewards matter
+epsilon = 1.0    # exploration rate: 1.0 = explore randomly at first
+
+rewards_per_episode = []
+n_episodes = 2000
+
+for episode in range(n_episodes):
+    state, _ = env.reset()
+    s = discretise(state)
+    total_reward = 0
+
+    for step in range(500):
+        # Epsilon-greedy: explore randomly or exploit best known action
+        if np.random.rand() < epsilon:
+            action = env.action_space.sample()       # explore
+        else:
+            action = np.argmax(Q[s])                  # exploit
+
+        next_state, reward, terminated, truncated, _ = env.step(action)
+        ns = discretise(next_state)
+
+        # Q-learning update rule (the core of the algorithm)
+        best_future = np.max(Q[ns])
+        Q[s][action] += alpha * (reward + gamma * best_future - Q[s][action])
+
+        s = ns
+        total_reward += reward
+        if terminated or truncated:
+            break
+
+    # Decay epsilon: over time, exploit more and explore less
+    epsilon = max(0.01, epsilon * 0.995)
+    rewards_per_episode.append(total_reward)
+
+    if (episode + 1) % 500 == 0:
+        avg = np.mean(rewards_per_episode[-100:])
+        print(f"Episode {episode+1:4d} | Avg reward (last 100): {avg:.1f} | ε={epsilon:.3f}")
+
+env.close()
+print(f"\nFinal avg reward: {np.mean(rewards_per_episode[-100:]):.1f} / 500")</code></pre>
+
+<h3>Generative AI</h3>
+<p>
+    <strong>Generative AI</strong> creates new content — images, text, audio, video, code — rather than classifying or predicting from existing data. It is the fastest-moving area of AI and the one generating the most industry demand right now.
+</p>
+
+<h4>Generative Adversarial Networks (GANs)</h4>
+<p>
+    A GAN trains two networks in opposition: a <strong>Generator</strong> that creates fake data, and a <strong>Discriminator</strong> that tries to tell real from fake. The Generator improves by fooling the Discriminator; the Discriminator improves by catching the Generator. After training, the Generator produces highly realistic outputs. GANs can generate photorealistic faces, artwork, and synthetic training data.
+</p>
+
+<h4>Large Language Models (LLMs)</h4>
+<p>
+    <strong>LLMs</strong> like GPT-4 and Claude are Transformer-based models trained on vast amounts of text. They learn the statistical patterns of language so thoroughly that they can generate coherent, contextually appropriate text, answer questions, write code, and reason about complex topics. The key insight is that predicting the next word at scale on enough data produces emergent capabilities far beyond simple text completion.
+</p>
+
+<h4>Reference: Text Generation with GPT-2</h4>
+<p class="sandbox-hint">Requires the transformers and torch libraries and downloads a ~500MB model — run this in Colab or Jupyter.</p>
+<pre data-lang="python"><code># Install: pip install transformers torch
+from transformers import pipeline, set_seed
+
+# ── Load GPT-2 text generation pipeline ──────────────────────────────
+# GPT-2 is OpenAI's 2019 model (~500MB). Small by today's standards
+# but still impressive and free to run locally.
+generator = pipeline('text-generation', model='gpt2')
+set_seed(42)  # for reproducible outputs
+
+# ── Generate text from a prompt ───────────────────────────────────────
+prompts = [
+    "The future of artificial intelligence in healthcare will",
+    "A machine learning engineer's typical day involves",
+    "The most important skill for breaking into AI is"
+]
+
+for prompt in prompts:
+    result = generator(
+        prompt,
+        max_new_tokens=60,
+        num_return_sequences=1,
+        temperature=0.8,     # 0=deterministic, 1=random, >1=very creative
+        do_sample=True,
+        pad_token_id=50256   # suppress warning
+    )
+    print(f"PROMPT: {prompt}")
+    print(f"OUTPUT: {result[0]['generated_text']}")
+    print("─" * 60)
+
+# ── Key parameters explained ──────────────────────────────────────────
+# temperature: controls randomness. Lower = more focused/repetitive.
+# top_p: nucleus sampling — only consider tokens whose cumulative
+#         probability exceeds top_p. Balances quality and diversity.
+# max_new_tokens: how many tokens to generate beyond the prompt.
+print("Text generation complete.")</code></pre>
+
+<h3>MLOps: Taking Models to Production</h3>
+<p>
+    Building a model that works in a Jupyter Notebook is one thing. <strong>MLOps</strong> (Machine Learning Operations) is the practice of reliably deploying, monitoring, and maintaining ML models in production — where real users depend on them 24/7.
+</p>
+<p>
+    Without MLOps, models degrade silently as the real world changes. With it, you have automated pipelines that retrain, test, and redeploy models continuously.
+</p>
+<ul>
+    <li><strong>Model versioning</strong> — track experiments and model versions (tools: MLflow, Weights &amp; Biases)</li>
+    <li><strong>CI/CD for ML</strong> — automated testing and deployment pipelines</li>
+    <li><strong>Model serving</strong> — expose the model via an API so applications can use it (tools: FastAPI, TensorFlow Serving, BentoML)</li>
+    <li><strong>Monitoring</strong> — detect when model performance degrades due to data drift</li>
+    <li><strong>Data pipelines</strong> — automate data collection, preprocessing, and retraining (tools: Airflow, Prefect)</li>
+</ul>
+
+<h4>Reference: Serving a Model as a REST API</h4>
+<p class="sandbox-hint">Writes real files and expects a local uvicorn server — run this in your own environment, not the browser sandbox.</p>
+<pre data-lang="python"><code># Install: pip install fastapi uvicorn scikit-learn joblib
+# This creates a production-ready API for your ML model.
+
+# ── Step 1: Train and save the model (run once) ───────────────────────
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import load_iris
+import joblib
+
+X, y = load_iris(return_X_y=True)
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X, y)
+joblib.dump(model, 'iris_model.pkl')
+print("Model saved to iris_model.pkl")
+
+# ── Step 2: Create the API (save as api.py and run with uvicorn) ──────
+api_code = '''
+from fastapi import FastAPI
+from pydantic import BaseModel
+import joblib
+import numpy as np
+
+app = FastAPI(title="Iris Classifier API")
+model = joblib.load("iris_model.pkl")
+CLASS_NAMES = ["setosa", "versicolor", "virginica"]
+
+class IrisFeatures(BaseModel):
+    sepal_length: float
+    sepal_width:  float
+    petal_length: float
+    petal_width:  float
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+@app.post("/predict")
+def predict(features: IrisFeatures):
+    X = np.array([[
+        features.sepal_length,
+        features.sepal_width,
+        features.petal_length,
+        features.petal_width
+    ]])
+    prediction = model.predict(X)[0]
+    probabilities = model.predict_proba(X)[0]
+    return {
+        "predicted_class": CLASS_NAMES[prediction],
+        "confidence": float(probabilities[prediction]),
+        "all_probabilities": {
+            name: float(prob)
+            for name, prob in zip(CLASS_NAMES, probabilities)
+        }
+    }
+'''
+
+with open('api.py', 'w') as f:
+    f.write(api_code.strip())
+
+print("API file saved. To run it:")
+print("  uvicorn api:app --reload")
+print()
+print("Then test it with:")
+print('  curl -X POST "http://localhost:8000/predict" \\')
+print('       -H "Content-Type: application/json" \\')
+print('       -d \'{"sepal_length":5.1,"sepal_width":3.5,')
+print('             "petal_length":1.4,"petal_width":0.2}\'')
+print()
+print("Expected response:")
+print('  {"predicted_class": "setosa", "confidence": 0.97, ...}')</code></pre>
+
+<h3>Coding Basics: Turning Lessons Into a Real Project</h3>
+<p>A useful AI project combines the coding basics from earlier lessons: variables for state, lists and tables for data, functions for repeatable steps, and conditionals for decisions.</p>
+<p>The final project should not be magic. It should be a clear program that receives input, processes it, makes a limited recommendation, and explains why.</p>
+
+<h3>Capstone Project: Financial News Sentiment Dashboard</h3>
+<p>
+    This project brings together <strong>every skill from all six modules</strong>: data collection, text preprocessing (Module 4), a trained sentiment classifier (Modules 2 &amp; 3), and API deployment (this module). The result is a working, deployable application you can put on your CV and GitHub.
+</p>
+
+<h4>Project Overview</h4>
+<ul>
+    <li><strong>Goal:</strong> Analyse the sentiment of financial news headlines and display results on a live dashboard</li>
+    <li><strong>Stack:</strong> Python · requests · NLTK · scikit-learn/transformers · FastAPI · HTML/JS</li>
+    <li><strong>Data:</strong> NewsAPI (free tier) or static CSV of financial headlines</li>
+    <li><strong>Output:</strong> A web page showing each headline with its sentiment (Positive / Negative / Neutral) and confidence score</li>
+</ul>
+
+<div class="info-box">
+    <div class="info-label">How the Capstone Code Fits Together</div>
+    <ul>
+        <li><strong>Data acquisition:</strong> collect or load financial news headlines.</li>
+        <li><strong>NLP preprocessing:</strong> clean text, tokenize it, and prepare it for analysis.</li>
+        <li><strong>Modeling:</strong> classify each headline as positive or negative.</li>
+        <li><strong>Evaluation:</strong> measure whether the predictions are useful.</li>
+        <li><strong>Dashboard:</strong> show the sentiment results in a way a person can understand.</li>
+    </ul>
+</div>
+
+<h4>Hands-On: Complete Capstone Pipeline</h4>
+
+<div class="sandbox-demo" data-demo-id="m6-ex1">
+    <div class="sandbox-label">Tier 1 — Run the Example</div>
+    <p class="sandbox-run-order-note">Run the steps in order, top to bottom — this is the full pipeline your own capstone will build on.</p>
+
+    <div class="sandbox-step">
+        <div class="step-label">Step 1 — Build a Labelled Headline Dataset</div>
+        <p class="step-intro">In a real project you'd scrape these or use a dataset like HuggingFace's financial_phrasebank. Here, 20 hand-labelled example headlines stand in for that.</p>
+        <pre data-lang="python"><code>headlines = [
+    ("Company reports record profits, shares surge 15%",          "positive"),
+    ("Central bank raises interest rates amid inflation fears",   "negative"),
+    ("Tech giant announces major layoffs, 10,000 jobs cut",       "negative"),
+    ("Quarterly earnings beat analyst expectations by 20%",       "positive"),
+    ("Oil prices fall sharply on demand concerns",                "negative"),
+    ("Startup secures $500M Series C funding round",              "positive"),
+    ("Merger talks collapse, stock drops 8%",                     "negative"),
+    ("FDA approves new drug, pharma stock skyrockets",            "positive"),
+    ("Regulatory probe launched into market manipulation",        "negative"),
+    ("Consumer confidence hits five-year high",                   "positive"),
+    ("Bank reports unexpected losses, shares tumble",             "negative"),
+    ("Renewable energy firm lands billion-dollar government deal","positive"),
+    ("Supply chain disruptions hit manufacturing output",         "negative"),
+    ("E-commerce sales grew 40% in Q3, revenue at record high",  "positive"),
+    ("Credit rating downgraded on rising debt concerns",          "negative"),
+    ("AI company IPO raises $2 billion on first day of trading",  "positive"),
+    ("Inflation data worse than expected, markets fall",          "negative"),
+    ("Dividend raised for eighth consecutive quarter",            "positive"),
+    ("Factory output declines for third straight month",          "negative"),
+    ("Breakthrough cancer treatment approved, biotech rallies",   "positive"),
+]
+
+texts  = [h[0] for h in headlines]
+labels = [1 if h[1] == "positive" else 0 for h in headlines]
+print(f"Loaded {len(texts)} headlines")</code></pre>
+        <div class="sandbox-actions">
+            <button class="sandbox-btn run-demo-btn" type="button">▶ Run This Step</button>
+        </div>
+        <div class="sandbox-output">Click "Run This Step" to see the real output.</div>
+    </div>
+
+    <div class="sandbox-step">
+        <div class="step-label">Step 2 — Clean the Text &amp; Vectorise With TF-IDF</div>
+        <p class="step-intro">Same cleaning pipeline as Module 4, then split into train/test sets and convert to TF-IDF vectors.</p>
+        <pre data-lang="python"><code>import re
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+def clean_text(text):
+    text = text.lower()
+    text = re.sub(r'[^a-z\s]', '', text)
+    return text
+
+texts_clean = [clean_text(t) for t in texts]
+
+X_train, X_test, y_train, y_test, raw_train, raw_test = train_test_split(
+    texts_clean, labels, texts, test_size=0.3, random_state=42
+)
+
+vectorizer = TfidfVectorizer(max_features=500, ngram_range=(1,2))
+X_train_vec = vectorizer.fit_transform(X_train)
+X_test_vec  = vectorizer.transform(X_test)
+print(f"Vocabulary size: {len(vectorizer.vocabulary_)}")</code></pre>
+        <div class="sandbox-actions">
+            <button class="sandbox-btn run-demo-btn" type="button">▶ Run This Step</button>
+        </div>
+        <div class="sandbox-output">Click "Run This Step" to see the real output.</div>
+    </div>
+
+    <div class="sandbox-step">
+        <div class="step-label">Step 3 — Train the Sentiment Classifier</div>
+        <p class="step-intro">A Logistic Regression classifier on the TF-IDF vectors, then check it against the held-out test headlines.</p>
+        <pre data-lang="python"><code>from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+
+clf = LogisticRegression(random_state=42, max_iter=1000)
+clf.fit(X_train_vec, y_train)
+
+y_pred = clf.predict(X_test_vec)
+print("=== Model Evaluation ===")
+print(classification_report(y_test, y_pred,
+                             target_names=['Negative', 'Positive']))</code></pre>
+        <div class="sandbox-actions">
+            <button class="sandbox-btn run-demo-btn" type="button">▶ Run This Step</button>
+        </div>
+        <div class="sandbox-output">Click "Run This Step" to see the real output.</div>
+    </div>
+
+    <div class="sandbox-step">
+        <div class="step-label">Step 4 — Analyse Live Headlines (Simulated Dashboard)</div>
+        <p class="step-intro">Run the trained model on brand-new headlines, the way your dashboard would with a live news feed.</p>
+        <pre data-lang="python"><code>live_headlines = [
+    "Apple hits $3 trillion market cap on strong iPhone sales",
+    "Federal Reserve signals further rate hikes ahead",
+    "Tesla recalls 200,000 vehicles over safety concerns",
+    "Amazon Web Services revenue grows 30% year over year",
+    "Housing market slows as mortgage rates hit 20-year high",
+]
+
+print("\n=== Live Sentiment Dashboard ===")
+print("─" * 65)
+
+for headline in live_headlines:
+    cleaned  = clean_text(headline)
+    vec      = vectorizer.transform([cleaned])
+    pred     = clf.predict(vec)[0]
+    prob     = clf.predict_proba(vec)[0]
+    sentiment = "POSITIVE" if pred == 1 else "NEGATIVE"
+    confidence = prob[pred]
+    bar = "█" * int(confidence * 20)
+    print(f"{'[' + sentiment + ']':12s} {confidence:.0%} {bar}")
+    print(f"  {headline}")
+    print()</code></pre>
+        <div class="sandbox-actions">
+            <button class="sandbox-btn run-demo-btn" type="button">▶ Run This Step</button>
+        </div>
+        <div class="sandbox-output">Click "Run This Step" to see the real output.</div>
+    </div>
+</div>
+
+<div class="sandbox-practice" data-checks-id="m6-ex1">
+    <div class="sandbox-label">Tier 2 — Your Turn: Write It Yourself</div>
+    <p class="sandbox-hint">Same lesson, code removed. Type the real Python under each comment, then run it.</p>
+    <textarea class="practice-editor" spellcheck="false" wrap="off">import re
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+
+# ── Step 1: Build a list of (headline, "positive"/"negative") tuples ──
+# (use your own headlines, or the ones from the lesson)
+
+
+# ── Step 2: Clean the text (lowercase, strip non-letters) ─────────────
+# Split into train/test, then vectorise with a TfidfVectorizer called vectorizer
+
+
+# ── Step 3: Train a LogisticRegression classifier called clf, then print a classification_report ─
+
+
+# ── Step 4: Run the trained model on 2-3 brand-new headlines of your own
+
+</textarea>
+    <div class="sandbox-actions">
+        <button class="sandbox-btn run-practice-btn" type="button">▶ Run My Code</button>
+        <button class="sandbox-btn secondary reset-practice-btn" type="button">↺ Reset</button>
+    </div>
+    <div class="sandbox-output">Your output will appear here.</div>
+</div>
+
+<p>
+    To take this from a browser demo to a real deployable project: save the trained model and vectoriser with <code>joblib.dump()</code>, wrap them in the FastAPI pattern from the MLOps section above, connect to NewsAPI for a live feed (free tier: 100 requests/day), and build a simple HTML dashboard that polls your API every 60 seconds. Deploy to Render, Railway, or Fly.io — all have free tiers. That's a complete, deployable AI application.
+</p>
+
+<h3>What to Do Next</h3>
+<p>
+    You have completed all six modules and built a real AI application. Here is a practical roadmap for turning this into career momentum:
+</p>
+
+<div class="info-box">
+    <div class="info-label">Your Next 30 Days</div>
+    <p>
+        <strong>Week 1</strong> — Push the capstone project to GitHub. Write a clear README explaining what it does, how to run it, and what you learned.<br><br>
+        <strong>Week 2</strong> — Deploy it publicly (Render.com free tier takes 15 minutes). Add the live URL to your LinkedIn and CV.<br><br>
+        <strong>Week 3</strong> — Extend it. Add a second data source, a chart, or a comparison between models. Employers love to see iteration.<br><br>
+        <strong>Week 4</strong> — Start applying. Target roles like: ML Engineer (Junior), Data Scientist, AI Engineer, ML Ops Engineer, NLP Engineer. Your portfolio now has concrete evidence of every skill these roles require.
+    </p>
+</div>
+
+<ul>
+    <li><strong>Kaggle</strong> — compete in ML competitions to benchmark your skills and build your profile</li>
+    <li><strong>HuggingFace</strong> — explore pre-trained models, publish your own fine-tuned models</li>
+    <li><strong>Papers With Code</strong> — stay current with state-of-the-art research and find reproducible implementations</li>
+    <li><strong>Fast.ai</strong> — top-down, practical deep learning course (excellent complement to this course)</li>
+    <li><strong>LinkedIn</strong> — post about what you built. The AI community is supportive and hiring managers actively look here</li>
+</ul>
+
+<h3>Final Extension: Build Your Own Safe AI Agent</h3>
+<p>After completing the core capstone, you can design your own beginner AI agent. An <strong>AI agent</strong> is a program that receives input, uses rules or a model to reason about that input, and recommends or performs a bounded action.</p>
+<p>The goal is to build something useful and safe: a study helper, task organizer, budgeting assistant, writing coach, customer-support triage tool, or research summarizer. Your agent should help a person make better decisions without hiding what it is doing.</p>
+
+<div class="info-box">
+    <div class="info-label">Safe Agent Rules</div>
+    <ul>
+        <li><strong>Keep the scope narrow:</strong> define exactly what the agent is allowed to help with.</li>
+        <li><strong>Keep a human in control:</strong> the agent can suggest actions, but a person should approve important decisions.</li>
+        <li><strong>Protect privacy:</strong> do not collect passwords, private keys, banking logins, medical records, or unnecessary personal data.</li>
+        <li><strong>Stay legal and non-harmful:</strong> do not build agents for hacking, surveillance, fraud, harassment, weaponization, or bypassing security systems.</li>
+        <li><strong>Explain the output:</strong> the agent should show why it recommended something, not just give an answer.</li>
+    </ul>
+</div>
+
+<h4>Hands-On: Fill Out Your Agent Planning Template</h4>
+<p>Fill this out before writing code. This keeps the project realistic and safe.</p>
+
+<div class="sandbox-practice" data-checks-id="m6-plan">
+    <div class="sandbox-label">Your Planning Worksheet</div>
+    <p class="sandbox-hint">This is a worksheet, not a puzzle with one right answer — fill in each variable with your own plan, then run it to see your agent plan printed back to you.</p>
+    <textarea class="practice-editor" spellcheck="false" wrap="off"># My Safe AI Agent Plan
+
+# 1. Agent purpose:
+# Example: Help students choose what lesson to review next.
+purpose = ""
+
+# 2. Allowed inputs:
+# Example: quiz score, topic name, time available.
+allowed_inputs = []
+
+# 3. Agent decision rules:
+# Example: if score is below 80, recommend review.
+decision_rules = []
+
+# 4. Actions the agent is allowed to suggest:
+# Example: "review module 2", "practice the code example", "take a break".
+allowed_actions = []
+
+# 5. Actions the agent is NOT allowed to take:
+# Example: "send messages automatically", "access private accounts", "change files".
+blocked_actions = []
+
+# 6. Explanation the agent should give:
+# Example: "I recommended this because your quiz score was below 80%."
+explanation_style = ""
+
+# ── Run this to see your plan printed back ────────────────────────────
+print("=== My Safe AI Agent Plan ===")
+print("Purpose:", purpose)
+print("Allowed inputs:", allowed_inputs)
+print("Decision rules:", decision_rules)
+print("Allowed actions:", allowed_actions)
+print("Blocked actions:", blocked_actions)
+print("Explanation style:", explanation_style)</textarea>
+    <div class="sandbox-actions">
+        <button class="sandbox-btn run-practice-btn" type="button">▶ Run My Plan</button>
+        <button class="sandbox-btn secondary reset-practice-btn" type="button">↺ Reset</button>
+    </div>
+    <div class="sandbox-output">Your plan will appear here.</div>
+</div>
+
+<p><strong>Final checkpoint:</strong> A good beginner agent has a clear purpose, limited inputs, safe allowed actions, blocked risky actions, and plain-language explanations.</p>
+
+<p style="margin-top:2rem;">
+    Congratulations on completing the <strong>AI &amp; Machine Learning Mastery Course</strong>. You started with Python basics and have finished knowing how to build, train, evaluate, and deploy real ML systems. That is a genuine, marketable skill set — go use it.
+</p>
+</div>

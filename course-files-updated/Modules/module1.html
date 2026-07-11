@@ -1,0 +1,229 @@
+<div class="module-content">
+<h2>Module 1: AI/ML Foundations</h2>
+
+<h3>What Is Artificial Intelligence?</h3>
+<p>
+    <strong>Artificial Intelligence (AI)</strong> is a broad field of computer science focused on building systems that can perform tasks that normally require human intelligence — things like understanding language, recognising images, making decisions, and learning from experience.
+</p>
+<p>
+    AI is not one single technology. It is a collection of techniques and approaches. You encounter AI every day: when Netflix recommends a show, when your phone unlocks with your face, or when a spam filter catches a phishing email. All of these are AI at work.
+</p>
+
+<div class="info-box">
+    <div class="info-label">Key Insight</div>
+    <p>Think of AI, ML, and Deep Learning as a set of nested circles. <strong>AI</strong> is the outermost circle (the big idea). <strong>Machine Learning</strong> sits inside it (one way to achieve AI). <strong>Deep Learning</strong> sits inside ML (a powerful subset of ML techniques).</p>
+</div>
+
+<h3>Machine Learning (ML)</h3>
+<p>
+    <strong>Machine Learning</strong> is the most widely used approach to building AI today. Instead of a programmer writing explicit rules ("if the email contains the word 'winner', mark it as spam"), an ML system <em>learns</em> the rules itself by examining thousands of examples.
+</p>
+<p>
+    The core idea: <strong>given enough data, an algorithm can discover patterns that a human might never think to code manually</strong>. This is why ML has transformed fields from medicine to finance to entertainment.
+</p>
+
+<h3>The Three Types of Machine Learning</h3>
+
+<h4>1. Supervised Learning</h4>
+<p>
+    The model is trained on a <strong>labelled dataset</strong> — every example has a known correct answer. The model learns to map inputs to outputs by minimising its mistakes.
+</p>
+<ul>
+    <li><strong>Example:</strong> Predicting house prices. Input = size, location, number of rooms. Output = price (a number we already know for past sales).</li>
+    <li><strong>Example:</strong> Email spam detection. Input = email text. Output = "spam" or "not spam".</li>
+    <li><strong>Use when:</strong> You have labelled historical data and want to predict or classify new data.</li>
+</ul>
+
+<h4>2. Unsupervised Learning</h4>
+<p>
+    The model is given <strong>unlabelled data</strong> and must find structure on its own — no correct answers are provided.
+</p>
+<ul>
+    <li><strong>Example:</strong> Customer segmentation. Group thousands of customers by purchasing behaviour without being told what the groups should be.</li>
+    <li><strong>Example:</strong> Anomaly detection. Find unusual transactions in a bank's data without knowing in advance what "unusual" looks like.</li>
+    <li><strong>Use when:</strong> You want to discover hidden patterns or structure in your data.</li>
+</ul>
+
+<h4>3. Reinforcement Learning</h4>
+<p>
+    An <strong>agent</strong> learns by interacting with an <strong>environment</strong>, receiving <strong>rewards</strong> for good actions and penalties for bad ones. Over thousands of trials, it learns an optimal strategy.
+</p>
+<ul>
+    <li><strong>Example:</strong> Training a game-playing AI (like AlphaGo). The agent plays millions of games and learns which moves lead to winning.</li>
+    <li><strong>Example:</strong> Self-driving car navigation — the car gets rewarded for smooth, safe driving and penalised for collisions.</li>
+    <li><strong>Use when:</strong> The problem involves sequential decisions in a dynamic environment.</li>
+</ul>
+
+<h3>Why Python for AI/ML?</h3>
+<p>
+    Python has become the dominant language for AI and ML for several reasons: it is readable, easy to learn, and has a rich ecosystem of libraries built specifically for data science and machine learning. The three you will use throughout this course are:
+</p>
+<ul>
+    <li><strong>NumPy</strong> — fast numerical computation with arrays and matrices</li>
+    <li><strong>Pandas</strong> — loading, cleaning, and analysing tabular data</li>
+    <li><strong>Scikit-learn</strong> — ready-to-use ML algorithms (covered in Module 2)</li>
+</ul>
+
+<h3>Coding Basics: Variables, Lists, and Tables</h3>
+<p>Before you build AI, you need to understand how code stores information. A <strong>variable</strong> gives a name to a value. A <strong>list</strong> stores multiple values in order. A <strong>table</strong> stores rows and columns so you can compare examples.</p>
+<p>AI and ML use those same basics at a larger scale. A model cannot learn from an idea in your head; it learns from data that your code loads, names, shapes, and passes into an algorithm.</p>
+
+<h3>Setting Up Your Environment</h3>
+<p>
+    Every code example in this course runs live in your browser below — nothing to install to practice. But when you get to your capstone project (Module 6), you'll want a real local Python environment on your own machine. Here's how, whenever you're ready for that step:
+</p>
+
+<div class="warning-box">
+    <div class="info-label">Before You Start (Optional — For Later)</div>
+    <p>Make sure Python 3.9+ is installed. You can check by running <code>python --version</code> in your terminal. If you see a version number, you're good. If not, download Python from python.org.</p>
+</div>
+
+<pre data-lang="bash"><code># 1. Create a virtual environment
+python -m venv venv
+
+# 2. Activate it
+# On Windows:
+venv\Scripts\activate
+# On Mac/Linux:
+source venv/bin/activate
+
+# 3. Install all required libraries
+pip install numpy pandas scikit-learn tensorflow keras nltk matplotlib</code></pre>
+
+<h4>Hands-On: NumPy &amp; Pandas Basics</h4>
+<p>
+    Time to practice. As you work through this, ask yourself: What name am I creating? What data is being stored? What shape is the data? That habit is the foundation of coding for AI.
+</p>
+
+<div class="info-box">
+    <div class="info-label">What You're About to Practice</div>
+    <ul>
+        <li><strong>Imports</strong> load NumPy and Pandas so you can use their tools.</li>
+        <li><strong>matrix</strong> starts as a regular Python list of rows, then <strong>np.array(...)</strong> converts it into a NumPy array for numerical work.</li>
+        <li><strong>data</strong> is a dictionary: each key becomes a column name.</li>
+        <li><strong>pd.DataFrame(...)</strong> turns the dictionary into a table you can inspect.</li>
+    </ul>
+</div>
+
+<div class="sandbox-demo" data-demo-id="m1-ex1">
+    <div class="sandbox-label">Tier 1 — Run the Example</div>
+    <p class="sandbox-run-order-note">Run the steps in order, top to bottom — each one builds on the last, just like cells in a notebook.</p>
+
+    <div class="sandbox-step">
+        <div class="step-label">Step 1 — NumPy: Fast Numerical Arrays</div>
+        <p class="step-intro">Python lists are slow for maths. NumPy arrays are fast. This step creates a 2-row, 3-column array (a matrix), then prints its shape, its mean, and the array doubled.</p>
+        <pre data-lang="python"><code>import numpy as np
+
+matrix = np.array([[1, 2, 3],
+                   [4, 5, 6]])
+
+print("Shape:", matrix.shape)       # (2, 3) — 2 rows, 3 columns
+print("Mean:", matrix.mean())       # 3.5 — average of all values
+print("Doubled:\n", matrix * 2)     # element-wise multiplication</code></pre>
+        <div class="sandbox-actions">
+            <button class="sandbox-btn run-demo-btn" type="button">▶ Run This Step</button>
+        </div>
+        <div class="sandbox-output">Click "Run This Step" to see the real output.</div>
+    </div>
+
+    <div class="sandbox-step">
+        <div class="step-label">Step 2 — Pandas: Working With Tabular Data</div>
+        <p class="step-intro">Think of a DataFrame as a spreadsheet in Python. Each column is a feature; each row is one data point (observation). This step builds a small DataFrame, then inspects it three different ways.</p>
+        <pre data-lang="python"><code>import pandas as pd
+
+data = {
+    'name':       ['Alice', 'Bob', 'Carol', 'Dave'],
+    'age':        [28, 34, 22, 45],
+    'salary':     [52000, 78000, 41000, 95000],
+    'department': ['Engineering', 'Marketing', 'Engineering', 'Finance']
+}
+df = pd.DataFrame(data)
+
+print("\n--- Full DataFrame ---")
+print(df)
+
+print("\n--- Summary Statistics ---")
+print(df[['age', 'salary']].describe())
+
+print("\n--- Average salary by department ---")
+print(df.groupby('department')['salary'].mean())</code></pre>
+        <div class="sandbox-actions">
+            <button class="sandbox-btn run-demo-btn" type="button">▶ Run This Step</button>
+        </div>
+        <div class="sandbox-output">Click "Run This Step" to see the real output.</div>
+    </div>
+</div>
+
+<div class="sandbox-practice" data-checks-id="m1-ex1">
+    <div class="sandbox-label">Tier 2 — Your Turn: Write It Yourself</div>
+    <p class="sandbox-hint">The comments below are the same instructions from the example above — but the code is gone. Type the actual Python under each comment, then run it. Typing it yourself is what makes it stick.</p>
+    <textarea class="practice-editor" spellcheck="false" wrap="off">import numpy as np
+import pandas as pd
+
+# ── NumPy: Fast Numerical Arrays ──────────────────────────────────────
+# Python lists are slow for maths. NumPy arrays are fast.
+# Create a 2-row, 3-column array (a matrix) called "matrix":
+# row 1 = [1, 2, 3], row 2 = [4, 5, 6]
+
+
+# Print the shape, the mean, and the array doubled
+# Shape should read (2, 3) — 2 rows, 3 columns
+# Mean should read 3.5 — average of all values
+# Doubled should show the element-wise multiplication
+
+
+# ── Pandas: Working With Tabular Data ────────────────────────────────
+# Think of a DataFrame as a spreadsheet in Python.
+# Each column is a feature; each row is one data point (observation).
+# Build a dictionary called "data" with keys: name, age, salary, department
+# (use the same 4 people as the example above)
+
+
+# Turn that dictionary into a DataFrame called "df"
+
+
+# Print the full DataFrame
+
+
+# Print summary statistics for the 'age' and 'salary' columns
+
+
+# Print the average salary grouped by department
+
+</textarea>
+    <div class="sandbox-actions">
+        <button class="sandbox-btn run-practice-btn" type="button">▶ Run My Code</button>
+        <button class="sandbox-btn secondary reset-practice-btn" type="button">↺ Reset</button>
+    </div>
+    <div class="sandbox-output">Your output will appear here.</div>
+</div>
+
+<h4>Understanding the Output</h4>
+<p>
+    When you run this script you will see the DataFrame printed as a table, a statistical summary showing min/max/mean for numerical columns, and the average salary split by department. This kind of exploration — called <strong>Exploratory Data Analysis (EDA)</strong> — is the very first thing a data scientist or ML engineer does with any new dataset.
+</p>
+<p>
+    In every real ML project, you will: (1) load data into a DataFrame from a CSV, database, or API, (2) explore it with <code>.describe()</code>, <code>.groupby()</code>, and <code>.head()</code>, (3) clean it by handling missing values and fixing types, and (4) feed the processed arrays into an ML model. Steps 2 and 3 are covered in Module 2.
+</p>
+
+<h3>The ML Workflow: The Big Picture</h3>
+<p>
+    Before jumping into algorithms, it is worth understanding the end-to-end process you will follow in every module:
+</p>
+<ol>
+    <li><strong>Define the problem</strong> — what are you predicting? Is it a number (regression) or a category (classification)?</li>
+    <li><strong>Collect and explore data</strong> — load it, look at it, understand its shape and quirks</li>
+    <li><strong>Preprocess</strong> — clean missing values, encode categories, scale numbers (Module 2)</li>
+    <li><strong>Choose and train a model</strong> — pick an algorithm, fit it to your training data</li>
+    <li><strong>Evaluate</strong> — measure performance on data the model has never seen</li>
+    <li><strong>Improve and iterate</strong> — tune, add features, try different algorithms</li>
+    <li><strong>Deploy</strong> — make the model available to real users (Module 6)</li>
+</ol>
+
+<div class="info-box">
+    <div class="info-label">Career Tip</div>
+    <p>In job interviews, being able to describe this workflow clearly — even without memorising specific algorithms — signals that you understand how ML projects actually work in practice. Interviewers love candidates who see the whole pipeline, not just individual steps.</p>
+</div>
+
+<p><strong>Checkpoint before the quiz:</strong> If you can explain why arrays are useful for numbers and DataFrames are useful for tables, you understand the purpose of this setup code.</p>
+</div>
